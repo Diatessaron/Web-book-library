@@ -2,9 +2,10 @@ spring:
   data:
     mongodb:
       port: 0
-      database: booklibrary
+      database: library
 
 mongock:
+  enabled: true
   runner-type: "InitializingBean"
   change-logs-scan-package:
-    - ru.otus.homework.homework3.mongock.changelog
+    - ru.otus.homework3.mongock.changelog

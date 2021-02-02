@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Genre List</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .genres td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+<a th:href="@{/genre-operations/genres/add}" href="genreSave.html">Add genre</a>
+
+<h2>Genres:</h2>
+
+<table class="genres">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="genre : ${genres}">
+        <td th:text="${genre.id}">1</td>
+        <td>
+            <a th:text="${genre.name}" th:href="@{'/genre-operations/genres/{name}'(name=${genre.name})}"
+                    href="genre.html">Genre</a>
+        </td>
+        <td>
+            <a th:href="@{'/genre-operations/genres/edit/{name}'(name=${genre.name})}"
+               href="genreEdit.html">Edit</a>
+        </td>
+        <td>
+            <form th:object="${genre}" th:action="@{'/genre-operations/genres/{name}'(name=${genre.name})}"
+                  th:method="post">
+                <button type="submit" class="btn">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comment</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .comment td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+
+<h1>Comment:</h1>
+
+<table class="comment">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Book Title</th>
+        <th>Content</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${comment.id}">1</td>
+        <td th:text="${comment.book.title}">Book</td>
+        <td th:text="${comment.content}">Comment</td>
+        <td>
+            <a th:href="@{'/comment-operations/comments/edit/{content}'(content=${comment.content})}"
+               href="commentEdit.html">Edit</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

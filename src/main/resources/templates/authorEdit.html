@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit author</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+
+<h2>Edit</h2>
+
+<form th:object="${author}" th:action="@{'/author-operations/authors/edit/{name}'(name=${author.name})}"
+      th:method="post">
+    <input type="text" th:value="${author.name}" name="author" placeholder="Input author name" class="form-control"><br>
+    <button type="submit" class="btn btn-success">Edit</button>
+</form>
+
+</body>
+</html>

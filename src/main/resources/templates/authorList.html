@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Author List</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors, .authors td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+<a th:href="@{/author-operations/authors/add}" href="authorSave.html">Add author</a>
+
+<h2>Authors:</h2>
+
+<table class="authors">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author : ${authors}">
+        <td th:text="${author.id}">1</td>
+        <td>
+            <a th:text="${author.name}" th:href="@{'/author-operations/authors/{name}'(name=${author.name})}"
+               href="author.html">John Doe</a>
+        </td>
+        <td>
+            <a th:href="@{'/author-operations/authors/edit/{name}'(name=${author.name})}"
+               href="authorEdit.html">Edit</a>
+        </td>
+        <td>
+            <form th:object="${author}" th:action="@{'/author-operations/authors/{name}'(name=${author.name})}"
+                  th:method="post">
+                <button type="submit" class="btn">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

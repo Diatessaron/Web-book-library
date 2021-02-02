@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Genre</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .genre td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+
+<h1>Genre:</h1>
+
+<table class="genre">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${genre.id}">1</td>
+        <td th:text="${genre.name}">John Doe</td>
+        <td>
+            <a th:href="@{'/genre-operations/genres/edit/{name}'(name=${genre.name})}"
+               href="genreEdit.html">Edit</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</body>
+</html>

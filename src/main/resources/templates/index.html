@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Crud App</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .menu, .menu td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="menu">
+    <a th:href="@{/book-operations/books}" href="bookList.html">Books</a>
+    <a th:href="@{/comment-operations/comments}" href="commentList.html">Comments</a>
+    <a th:href="@{/author-operations/authors}" href="authorList">Authors</a>
+    <a th:href="@{/genre-operations/genres}" href="genreList.html">Genres</a>
+</div>
+
+</body>
+</html>

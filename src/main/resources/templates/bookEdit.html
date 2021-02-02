@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+
+<h2>Edit</h2>
+
+<form th:object="${book}" th:action="@{'/book-operations/books/edit/{title}'(title=${book.title})}"
+      th:method="post">
+    <input type="text" th:value="${book.title}" name="title" placeholder="Input book title" class="form-control"><br>
+    <input type="text" th:value="${book.author.name}" name="authorName" placeholder="Input book author"
+           class="form-control">
+    <input type="text" th:value="${book.genre.name}" name="genreName" placeholder="Input book genre" class="form-control">
+    <button type="submit" class="btn btn-success">Edit</button>
+</form>
+
+</body>
+</html>

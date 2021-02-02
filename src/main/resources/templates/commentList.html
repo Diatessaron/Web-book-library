@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comment List</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .comments td {
+            border: 1px solid lightgray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}" href="index.html">Main page</a>
+<a th:href="@{/comment-operations/comments/add}" href="commentSave.html">Add comment</a>
+
+<h2>Comments:</h2>
+
+<table class="comments">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Book</th>
+        <th>Content</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : ${comments}">
+        <td th:text="${comment.id}">1</td>
+        <td>
+            <a th:text="${comment.book.title}"
+               th:href="@{'/comment-operations/comments/book/{bookTitle}'(bookTitle=${comment.book.title})}"
+               href="commentList.html">Comment</a>
+        </td>
+        <td>
+            <a th:text="${comment.content}"
+               th:href="@{'/comment-operations/comments/{content}'(content=${comment.content})}"
+               href="comment.html"></a>
+        </td>
+        <td>
+            <a th:href="@{'/comment-operations/comments/edit/{name}'(name=${comment.content})}"
+               href="commentEdit.html">Edit</a>
+        </td>
+        <td>
+            <form th:object="${comment}"
+                  th:action="@{'/comment-operations/comments/{content}'(content=${comment.content})}"
+                  th:method="post">
+                <button type="submit" class="btn">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

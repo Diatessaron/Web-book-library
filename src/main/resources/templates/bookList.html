@@ -3,24 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Book List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style type="text/css">
         body {
-            padding: 50px;
+            padding: 20px;
         }
 
         .books td {
             border: 1px solid lightgray;
             padding: 5px;
         }
+
+        a {
+            padding: 2px;
+            margin: 4px;
+        }
     </style>
 </head>
 <body>
-<a th:href="@{/}" href="index.html">Main page</a>
-<a th:href="@{/book-operations/books/add}" href="bookSave.html">Add book</a>
+
+<header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
+    <nav class="my-2 my-md-0 me-md-3">
+        <a th:href="@{/books/add}" href="bookSave.html" class="btn btn-outline-primary">Add book</a>
+    </nav>
+</header>
 
 <br>
 <br>
-<form th:action="@{'/book-operations/books/comment'}"
+<form th:action="@{'/books/comment'}"
       th:method="get">
     <input type="text" name="comment" placeholder="Input book comment"
            class="form-control"><br>
@@ -47,25 +58,25 @@
     <tr th:each="book : ${books}">
         <td th:text="${book.id}">1</td>
         <td>
-            <a th:text="${book.title}" th:href="@{'/book-operations/books/title/{title}'(title=${book.title})}"
-               href="book.html">Book</a>
+            <a th:text="${book.title}" th:href="@{'/books/title/{title}'(title=${book.title})}"
+               href="bookByTitle.html">Book</a>
         </td>
         <td>
             <a th:text="${book.author.name}"
-               th:href="@{'/book-operations/books/author/{author}'(author=${book.author.name})}"
-               href="book.html">Author</a>
+               th:href="@{'/books/author/{author}'(author=${book.author.name})}"
+               href="bookByTitle.html">Author</a>
         </td>
         <td>
             <a th:text="${book.genre.name}"
-               th:href="@{'/book-operations/books/genre/{genre}'(genre=${book.genre.name})}"
-               href="book.html"></a>
+               th:href="@{'/books/genre/{genre}'(genre=${book.genre.name})}"
+               href="bookByTitle.html">Genre</a>
         </td>
         <td>
-            <a th:href="@{'/book-operations/books/edit/{title}'(title=${book.title})}"
+            <a th:href="@{'/books/edit/{title}'(title=${book.title})}"
                href="bookEdit.html">Edit</a>
         </td>
         <td>
-            <form th:object="${book}" th:action="@{'/book-operations/books/{title}'(title=${book.title})}"
+            <form th:object="${book}" th:action="@{'/books/{title}'(title=${book.title})}"
                   th:method="post">
                 <button type="submit" class="btn">
                     Delete

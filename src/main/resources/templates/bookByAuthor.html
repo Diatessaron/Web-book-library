@@ -2,10 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Book</title>
+    <title>Book by Author</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style type="text/css">
         body {
-            padding: 50px;
+            padding: 20px;
         }
 
         .book td {
@@ -15,7 +16,10 @@
     </style>
 </head>
 <body>
-<a th:href="@{/}" href="index.html">Main page</a>
+
+<header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
+</header>
 
 <h1>Book:</h1>
 
@@ -36,7 +40,7 @@
         <td th:text="${book.author.name}">John Doe</td>
         <td th:text="${book.genre.name}">Genre</td>
         <td>
-            <a th:href="@{'/book-operations/books/edit/{title}'(title=${book.title})}"
+            <a th:href="@{'/books/edit/{title}'(title=${book.title})}"
                href="bookEdit.html">Edit</a>
         </td>
     </tr>

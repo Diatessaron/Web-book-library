@@ -26,7 +26,7 @@ class GenreControllerTest {
     void testSaveByStatus() throws Exception {
         when(genreService.getAll()).thenReturn(List.of(new Genre("Modernist novel"), new Genre("Genre")));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genre-operations/genres/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/genres/add")
                 .param("genre", "Genre"))
                 .andExpect(status().isFound());
     }
@@ -35,7 +35,7 @@ class GenreControllerTest {
     void testGetGenreByNameByStatus() throws Exception {
         when(genreService.getGenreByName("Genre")).thenReturn(new Genre("Genre"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genre-operations/genres/Genre"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/genres/Genre"))
                 .andExpect(status().isFound());
     }
 
@@ -43,7 +43,7 @@ class GenreControllerTest {
     void testGetAllByStatus() throws Exception {
         when(genreService.getAll()).thenReturn(List.of(new Genre("Modernist novel"), new Genre("Genre")));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/genre-operations/genres"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/genres"))
                 .andExpect(status().isOk());
     }
 
@@ -51,7 +51,7 @@ class GenreControllerTest {
     void testUpdateByStatus() throws Exception {
         when(genreService.updateGenre("Modernist novel", "Genre")).thenReturn("Genre was updated");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genre-operations/genres/edit/Modernist novel")
+        mockMvc.perform(MockMvcRequestBuilders.post("/genres/edit/Modernist novel")
                 .param("genre", "Genre"))
                 .andExpect(status().isFound());
     }
@@ -60,7 +60,7 @@ class GenreControllerTest {
     void testDeleteByNameByStatus() throws Exception {
         when(genreService.deleteGenreByName("Modernist novel")).thenReturn("Modernist novel was deleted");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genre-operations/genres/Modernist novel"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/genres/Modernist novel"))
                 .andExpect(status().isFound());
     }
 }

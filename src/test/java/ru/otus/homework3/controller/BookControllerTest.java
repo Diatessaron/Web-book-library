@@ -32,7 +32,7 @@ class BookControllerTest {
                 (new Book("Modernist novel", new Author("James Joyce"), new Genre("Modernist novel")),
                         new Book("Book", new Author("Author"), new Genre("Genre"))));
 
-        mockMvc.perform(post("/book-operations/books/add")
+        mockMvc.perform(post("/books/add")
                 .param("book", "Book"))
                 .andExpect(status().isFound());
     }
@@ -42,7 +42,7 @@ class BookControllerTest {
         when(bookService.getBookByTitle("Book")).thenReturn(new Book("Book", new Author("Author"),
                 new Genre("Genre")));
 
-        mockMvc.perform(get("/book-operations/books/title/Book"))
+        mockMvc.perform(get("/books/title/Book"))
                 .andExpect(status().isOk());
     }
 
@@ -51,7 +51,7 @@ class BookControllerTest {
         when(bookService.getBookByAuthor("Author")).thenReturn(new Book("Book", new Author("Author"),
                 new Genre("Genre")));
 
-        mockMvc.perform(get("/book-operations/books/author/Author"))
+        mockMvc.perform(get("/books/author/Author"))
                 .andExpect(status().isOk());
     }
 
@@ -60,7 +60,7 @@ class BookControllerTest {
         when(bookService.getBookByGenre("Genre")).thenReturn(new Book("Book", new Author("Author"),
                 new Genre("Genre")));
 
-        mockMvc.perform(get("/book-operations/books/genre/Genre"))
+        mockMvc.perform(get("/books/genre/Genre"))
                 .andExpect(status().isOk());
     }
 
@@ -69,7 +69,7 @@ class BookControllerTest {
         when(bookService.getBookByComment("Comment")).thenReturn(new Book("Book", new Author("Author"),
                 new Genre("Genre")));
 
-        mockMvc.perform(get("/book-operations/books/comment")
+        mockMvc.perform(get("/books/comment")
                 .param("comment", "Comment"))
                 .andExpect(status().isOk());
     }
@@ -80,7 +80,7 @@ class BookControllerTest {
                 (new Book("Modernist novel", new Author("James Joyce"), new Genre("Modernist novel")),
                         new Book("Book", new Author("Author"), new Genre("Genre"))));
 
-        mockMvc.perform(get("/book-operations/books"))
+        mockMvc.perform(get("/books"))
                 .andExpect(status().isOk());
     }
 
@@ -89,7 +89,7 @@ class BookControllerTest {
         doNothing().when(bookService).updateBook
                 ("Ulysses", "Book", "Author", "Genre");
 
-        mockMvc.perform(post("/book-operations/books/edit/Ulysses")
+        mockMvc.perform(post("/books/edit/Ulysses")
                 .param("title", "Book")
                 .param("authorName", "Author")
                 .param("genreName", "Genre"))
@@ -100,7 +100,7 @@ class BookControllerTest {
     void deleteByTitle() throws Exception {
         doNothing().when(bookService).deleteBookByTitle("Ulysses");
 
-        mockMvc.perform(post("/book-operations/books/edit/Ulysses"))
+        mockMvc.perform(post("/books/edit/Ulysses"))
                 .andExpect(status().isFound());
     }
 }

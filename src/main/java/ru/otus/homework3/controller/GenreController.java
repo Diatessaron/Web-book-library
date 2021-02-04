@@ -16,45 +16,45 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-    @GetMapping("genre-operations/genres/add")
+    @GetMapping("/genres/add")
     public String createPage() {
         return "genreSave";
     }
 
-    @PostMapping("/genre-operations/genres/add")
+    @PostMapping("/genres/add")
     public String create(@RequestParam(name = "genre") String genreName) {
         genreService.saveGenre(genreName);
-        return "redirect:/genre-operations/genres";
+        return "redirect:/genres";
     }
 
-    @GetMapping("/genre-operations/genres/{name}")
-    public String getGenreByName(@PathVariable String name, Model model) {
-        model.addAttribute("genre", genreService.getGenreByName(name));
+    @GetMapping("/genres/{genre}")
+    public String getGenreByName(@PathVariable String genre, Model model) {
+        model.addAttribute("genre", genreService.getGenreByName(genre));
         return "genre";
     }
 
-    @GetMapping("/genre-operations/genres")
+    @GetMapping("/genres")
     public String getAll(Model model) {
         final List<Genre> genres = genreService.getAll();
         model.addAttribute("genres", genres);
         return "genreList";
     }
 
-    @GetMapping("/genre-operations/genres/edit/{oldGenreName}")
-    public String editPage(@PathVariable String oldGenreName, Model model) {
-        model.addAttribute("genre", genreService.getGenreByName(oldGenreName));
+    @GetMapping("/genres/edit/{oldGenre}")
+    public String editPage(@PathVariable String oldGenre, Model model) {
+        model.addAttribute("genre", genreService.getGenreByName(oldGenre));
         return "genreEdit";
     }
 
-    @PostMapping("/genre-operations/genres/edit/{oldGenreName}")
-    public String update(@PathVariable String oldGenreName, @RequestParam(name = "genre") String genreName) {
-        genreService.updateGenre(oldGenreName, genreName);
-        return "redirect:/genre-operations/genres";
+    @PostMapping("/genres/edit/{oldGenre}")
+    public String update(@PathVariable String oldGenre, @RequestParam(name = "genre") String genreName) {
+        genreService.updateGenre(oldGenre, genreName);
+        return "redirect:/genres";
     }
 
-    @PostMapping("/genre-operations/genres/{name}")
-    public String deleteByName(@PathVariable String name) {
-        genreService.deleteGenreByName(name);
-        return "redirect:/genre-operations/genres";
+    @PostMapping("/genres/{genre}")
+    public String deleteByName(@PathVariable String genre) {
+        genreService.deleteGenreByName(genre);
+        return "redirect:/genres";
     }
 }

@@ -16,45 +16,45 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    @GetMapping("/author-operations/authors/add")
+    @GetMapping("/authors/add")
     public String createPage() {
         return "authorSave";
     }
 
-    @PostMapping("/author-operations/authors/add")
+    @PostMapping("/authors/add")
     public String create(@RequestParam(name = "author") String authorName) {
         authorService.saveAuthor(authorName);
-        return "redirect:/author-operations/authors";
+        return "redirect:/authors";
     }
 
-    @GetMapping("/author-operations/authors/{name}")
+    @GetMapping("/authors/{name}")
     public String getAuthorByName(@PathVariable String name, Model model) {
         model.addAttribute("author", authorService.getAuthorByName(name));
         return "author";
     }
 
-    @GetMapping("/author-operations/authors")
+    @GetMapping("/authors")
     public String getAll(Model model) {
         final List<Author> authors = authorService.getAll();
         model.addAttribute("authors", authors);
         return "authorList";
     }
 
-    @GetMapping("/author-operations/authors/edit/{oldAuthorName}")
-    public String editPage(@PathVariable String oldAuthorName, Model model) {
-        model.addAttribute("author", authorService.getAuthorByName(oldAuthorName));
+    @GetMapping("/authors/edit/{oldAuthor}")
+    public String editPage(@PathVariable String oldAuthor, Model model) {
+        model.addAttribute("author", authorService.getAuthorByName(oldAuthor));
         return "authorEdit";
     }
 
-    @PostMapping("/author-operations/authors/edit/{oldAuthorName}")
-    public String edit(@PathVariable String oldAuthorName, @RequestParam(name = "author") String authorName) {
-        authorService.updateAuthor(oldAuthorName, authorName);
-        return "redirect:/author-operations/authors";
+    @PostMapping("/authors/edit/{oldAuthor}")
+    public String edit(@PathVariable String oldAuthor, @RequestParam(name = "author") String authorName) {
+        authorService.updateAuthor(oldAuthor, authorName);
+        return "redirect:/authors";
     }
 
-    @PostMapping("/author-operations/authors/{name}")
-    public String deleteByName(@PathVariable String name) {
-        authorService.deleteAuthorByName(name);
-        return "redirect:/author-operations/authors";
+    @PostMapping("/authors/{author}")
+    public String deleteByName(@PathVariable String author) {
+        authorService.deleteAuthorByName(author);
+        return "redirect:/authors";
     }
 }

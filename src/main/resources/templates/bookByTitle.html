@@ -2,14 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Author</title>
+    <title>Book</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style type="text/css">
         body {
             padding: 20px;
         }
 
-        .author, .author td {
+        .book td {
             border: 1px solid lightgray;
             padding: 5px;
         }
@@ -21,26 +21,31 @@
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
-<h1>Author:</h1>
+<h1>Book:</h1>
 
-<table class="author">
+<table class="book">
     <thead>
     <tr>
         <th>ID</th>
-        <th>Name</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
         <th>Action</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-        <td th:text="${author.id}">1</td>
-        <td th:text="${author.name}">John Doe</td>
+        <td th:text="${book.id}">1</td>
+        <td th:text="${book.title}">Book</td>
+        <td th:text="${book.author.name}">John Doe</td>
+        <td th:text="${book.genre.name}">Genre</td>
         <td>
-            <a th:href="@{'/authors/edit/{author}'(author=${author.name})}"
-               href="authorEdit.html">Edit</a>
+            <a th:href="@{'/books/edit/{title}'(title=${book.title})}"
+               href="bookEdit.html">Edit</a>
         </td>
     </tr>
     </tbody>
 </table>
+
 </body>
 </html>

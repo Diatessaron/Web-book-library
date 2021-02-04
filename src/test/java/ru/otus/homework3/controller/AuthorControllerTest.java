@@ -26,7 +26,7 @@ class AuthorControllerTest {
     void shouldGetCorrectStatusAfterAuthorCreation() throws Exception {
         when(authorService.getAll()).thenReturn(List.of(new Author("James Joyce"), new Author("Author")));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/author-operations/authors/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/authors/add")
                 .param("author", "Author"))
                 .andExpect(status().isFound());
     }
@@ -35,7 +35,7 @@ class AuthorControllerTest {
     void testGetAuthorByNameByCorrectStatus() throws Exception {
         when(authorService.getAuthorByName("Author")).thenReturn(new Author("Author"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/author-operations/authors/Author"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/authors/Author"))
                 .andExpect(status().isOk());
     }
 
@@ -43,7 +43,7 @@ class AuthorControllerTest {
     void testGetAllByCorrectStatus() throws Exception {
         when(authorService.getAll()).thenReturn(List.of(new Author("James Joyce"), new Author("Author")));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/author-operations/authors"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/authors"))
                 .andExpect(status().isOk());
     }
 
@@ -51,7 +51,7 @@ class AuthorControllerTest {
     void testUpdateByCorrectStatus() throws Exception {
         when(authorService.updateAuthor("James Joyce", "Author")).thenReturn("Author was updated");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/author-operations/authors/edit/James Joyce")
+        mockMvc.perform(MockMvcRequestBuilders.post("/authors/edit/James Joyce")
                 .param("author", "Author"))
                 .andExpect(status().isFound());
     }
@@ -60,7 +60,7 @@ class AuthorControllerTest {
     void deleteByName() throws Exception {
         when(authorService.deleteAuthorByName("Author")).thenReturn("Author was deleted");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/author-operations/authors/Author"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/authors/Author"))
                 .andExpect(status().isFound());
     }
 }

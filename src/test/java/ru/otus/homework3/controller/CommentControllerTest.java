@@ -29,7 +29,7 @@ class CommentControllerTest {
                 (new Comment("Published in 1922", "Ulysses"),
                         new Comment("Comment", "Book")));
 
-        mockMvc.perform(post("/comment-operations/comments/add")
+        mockMvc.perform(post("/comments/add")
                 .param("comment", "Comment")
                 .param("book", "Book"))
                 .andExpect(status().isFound());
@@ -39,7 +39,7 @@ class CommentControllerTest {
     void testGetCommentByContentByStatus() throws Exception {
         when(commentService.getCommentByContent("Comment")).thenReturn(new Comment("Comment", "Book"));
 
-        mockMvc.perform(get("/comment-operations/comments/Comment"))
+        mockMvc.perform(get("/comments/Comment"))
                 .andExpect(status().isOk());
     }
 
@@ -49,7 +49,7 @@ class CommentControllerTest {
                 (new Comment("Published in 1922", "Book"),
                         new Comment("Comment", "Book")));
 
-        mockMvc.perform(get("/comment-operations/comments/book/Book"))
+        mockMvc.perform(get("/comments/book/Book"))
                 .andExpect(status().isOk());
     }
 
@@ -59,7 +59,7 @@ class CommentControllerTest {
                 (new Comment("Published in 1922", "Ulysses"),
                         new Comment("Comment", "Book")));
 
-        mockMvc.perform(get("/comment-operations/comments"))
+        mockMvc.perform(get("/comments"))
                 .andExpect(status().isOk());
     }
 
@@ -68,8 +68,8 @@ class CommentControllerTest {
         when(commentService.updateComment("Comment", "Published in 1922"))
                 .thenReturn("Comment was updated");
 
-        mockMvc.perform(post("/comment-operations/comments/edit/Comment")
-                .param("content", "Published in 1922"))
+        mockMvc.perform(post("/comments/edit/Comment")
+                .param("comment", "Published in 1922"))
                 .andExpect(status().isFound());
     }
 
@@ -77,7 +77,7 @@ class CommentControllerTest {
     void testDeleteByNameByStatus() throws Exception {
         when(commentService.deleteByContent("Comment")).thenReturn("Comment was deleted");
 
-        mockMvc.perform(post("/comment-operations/comments/Comment"))
+        mockMvc.perform(post("/comments/Comment"))
                 .andExpect(status().isFound());
     }
 }

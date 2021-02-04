@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Book Crud App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style type="text/css">
         body {
             padding: 50px;
@@ -15,11 +16,12 @@
     </style>
 </head>
 <body>
+
 <div class="menu">
-    <a th:href="@{/book-operations/books}" href="bookList.html">Books</a>
-    <a th:href="@{/comment-operations/comments}" href="commentList.html">Comments</a>
-    <a th:href="@{/author-operations/authors}" href="authorList">Authors</a>
-    <a th:href="@{/genre-operations/genres}" href="genreList.html">Genres</a>
+    <a th:href="@{/books}" href="bookList.html">Books</a>
+    <a th:href="@{/comments}" href="commentList.html">Comments</a>
+    <a th:href="@{/authors}" href="authorList">Authors</a>
+    <a th:href="@{/genres}" href="genreList.html">Genres</a>
 </div>
 
 </body>

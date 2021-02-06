@@ -22,6 +22,7 @@
             margin-top: 10px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -29,34 +30,49 @@
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
-<form id="form" action="/books/add" method="post">
+<form>
     <h1>Book Info:</h1>
 
     <div class="row">
-        <label for="holder-input">Title:</label>
-        <input id="holder-input" name="title" type="text" value="Book title"/>
+        <label for="input-title">Title:</label>
+        <input id="input-title" type="text" value="Book title"/>
     </div>
     <br>
     <div class="row">
-        <label for="holder-input2">Author:</label>
-        <input id="holder-input2" name="authorName" type="text" list="authorList"/>
+        <label for="input-author">Author:</label>
+        <input id="input-author" type="text" list="authorList"/>
         <datalist id="authorList" th:each="author : ${authors}">
             <option th:text="${author.name}">Author</option>
         </datalist>
     </div>
     <br>
     <div class="row">
-        <label for="holder-input3">Genre:</label>
-        <input id="holder-input3" name="genreName" type="text" list="genreList"/>
+        <label for="input-genre">Genre:</label>
+        <input id="input-genre" type="text" list="genreList"/>
         <datalist id="genreList" th:each="genre : ${genres}">
             <option th:text="${genre.name}">Genre</option>
         </datalist>
     </div>
 
     <div class="row">
-        <button type="submit">Save</button>
+        <button type="button" id="button">Save</button>
     </div>
 </form>
+
+<script>
+    document.getElementById('button').onclick = function () {
+        const title = document.getElementById('input-title').value;
+        const author = document.getElementById('input-author').value;
+        const genre = document.getElementById('input-genre').value;
+
+        $.ajax({
+            url: '/api/books',
+            method: 'post',
+            data: {title: title, authorName: author, genreName: genre}
+        })
+        document.location.href = '/books'
+    }
+</script>
 
 </body>
 </html>

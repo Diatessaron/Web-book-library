@@ -14,6 +14,7 @@
             padding: 5px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -23,7 +24,7 @@
 
 <h1>Author:</h1>
 
-<table class="author">
+<table class="author" id="table">
     <thead>
     <tr>
         <th>ID</th>
@@ -32,15 +33,38 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td th:text="${author.id}">1</td>
-        <td th:text="${author.name}">John Doe</td>
-        <td>
-            <a th:href="@{'/authors/edit/{author}'(author=${author.name})}"
-               href="authorEdit.html">Edit</a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script th:inline="javascript">
+    const author = /*[[${author.name}]]*/ '';
+    $(function () {
+        $.get('/api/authors/' + author).done(function (author) {
+            $('tbody').append(`
+                    <tr>
+                        <td>${author.id}</td>
+                        <td>
+                            <p>${author.name}</p>
+                        </td>
+                        <td>
+                            <a href="/authors/edit/${author.name}">Edit</a>
+                        </td>
+                        <td>
+                            <input type="button" value="Delete" id="input">
+                        </td>
+                    </tr>
+                `)
+            document.getElementById('input').onclick = function () {
+                const name = author.name
+                $.ajax({
+                    url: '/api/authors/' + name,
+                    method: 'delete'
+                })
+                document.location.href = '/authors'
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

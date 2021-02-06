@@ -1,4 +1,4 @@
-package ru.otus.homework3.controller;
+package ru.otus.homework3.rest.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,44 +23,46 @@ class GenreControllerTest {
     private GenreServiceImpl genreService;
 
     @Test
-    void testSaveByStatus() throws Exception {
+    void testCreateByStatus() throws Exception {
         when(genreService.getAll()).thenReturn(List.of(new Genre("Modernist novel"), new Genre("Genre")));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genres/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/genres")
                 .param("genre", "Genre"))
-                .andExpect(status().isFound());
+                .andExpect(status().isCreated());
     }
 
     @Test
     void testGetGenreByNameByStatus() throws Exception {
         when(genreService.getGenreByName("Genre")).thenReturn(new Genre("Genre"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genres/Genre"))
-                .andExpect(status().isFound());
-    }
-
-    @Test
-    void testGetAllByStatus() throws Exception {
-        when(genreService.getAll()).thenReturn(List.of(new Genre("Modernist novel"), new Genre("Genre")));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/genres"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/genres/Genre"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testUpdateByStatus() throws Exception {
-        when(genreService.updateGenre("Modernist novel", "Genre")).thenReturn("Genre was updated");
+    void testGetAllByStatus() throws Exception {
+        when(genreService.getAll()).thenReturn(List.of(new Genre("Modernist novel"),
+                new Genre("Genre")));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genres/edit/Modernist novel")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/genres"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testEditByStatus() throws Exception {
+        when(genreService.updateGenre("Modernist novel", "Genre"))
+                .thenReturn("Genre was updated");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/genres/Modernist novel")
                 .param("genre", "Genre"))
-                .andExpect(status().isFound());
+                .andExpect(status().isOk());
     }
 
     @Test
     void testDeleteByNameByStatus() throws Exception {
         when(genreService.deleteGenreByName("Modernist novel")).thenReturn("Modernist novel was deleted");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/genres/Modernist novel"))
-                .andExpect(status().isFound());
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/genres/Modernist novel"))
+                .andExpect(status().isOk());
     }
 }

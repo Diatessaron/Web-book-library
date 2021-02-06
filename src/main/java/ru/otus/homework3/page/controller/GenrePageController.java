@@ -1,4 +1,4 @@
-package ru.otus.homework3.controller;
+package ru.otus.homework3.page.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,22 +9,16 @@ import ru.otus.homework3.service.GenreService;
 import java.util.List;
 
 @Controller
-public class GenreController {
+public class GenrePageController {
     private final GenreService genreService;
 
-    public GenreController(GenreService genreService) {
+    public GenrePageController(GenreService genreService) {
         this.genreService = genreService;
     }
 
     @GetMapping("/genres/add")
     public String createPage() {
         return "genreSave";
-    }
-
-    @PostMapping("/genres/add")
-    public String create(@RequestParam(name = "genre") String genreName) {
-        genreService.saveGenre(genreName);
-        return "redirect:/genres";
     }
 
     @GetMapping("/genres/{genre}")
@@ -44,17 +38,5 @@ public class GenreController {
     public String editPage(@PathVariable String oldGenre, Model model) {
         model.addAttribute("genre", genreService.getGenreByName(oldGenre));
         return "genreEdit";
-    }
-
-    @PostMapping("/genres/edit/{oldGenre}")
-    public String update(@PathVariable String oldGenre, @RequestParam(name = "genre") String genreName) {
-        genreService.updateGenre(oldGenre, genreName);
-        return "redirect:/genres";
-    }
-
-    @PostMapping("/genres/{genre}")
-    public String deleteByName(@PathVariable String genre) {
-        genreService.deleteGenreByName(genre);
-        return "redirect:/genres";
     }
 }

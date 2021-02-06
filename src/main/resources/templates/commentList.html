@@ -19,6 +19,7 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -35,41 +36,51 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Book</th>
         <th>Content</th>
+        <th>Book</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="comment : ${comments}">
-        <td th:text="${comment.id}">1</td>
-        <td>
-            <a th:text="${comment.book.title}"
-               th:href="@{'/comments/book/{bookTitle}'(bookTitle=${comment.book.title})}"
-               href="commentList.html">Comment</a>
-        </td>
-        <td>
-            <a th:text="${comment.content}"
-               th:href="@{'/comments/{content}'(content=${comment.content})}"
-               href="comment.html"></a>
-        </td>
-        <td>
-            <a th:href="@{'/comments/edit/{name}'(name=${comment.content})}"
-               href="commentEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${comment}"
-                  th:action="@{'/comments/{content}'(content=${comment.content})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const content = btn.name
+        $.ajax({
+            url: '/api/comments/' + content,
+            method: 'delete'
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/comments').done(function (comments) {
+            comments.forEach(function (comment) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${comment.id}</td>
+                        <td>
+                            <a href="/comments/${comment.content}">${comment.content}</a>
+                        </td>
+                        <td>
+                            <a href="/comments/book/${comment.book.title}">${comment.book.title}</a>
+                        </td>
+                        <td>
+                            <a href="/comments/edit/${comment.content}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${comment.content}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
 
 </body>
 </html>

@@ -18,6 +18,7 @@
             background: lightgray;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -27,11 +28,24 @@
 
 <h2>Edit</h2>
 
-<form th:object="${genre}" th:action="@{'/genres/edit/{genre}'(genre=${genre.name})}"
-      th:method="post">
-    <input type="text" th:value="${genre.name}" name="genre" placeholder="Input genre name" class="form-control"><br>
-    <button type="submit" class="btn btn-success">Update</button>
+<form>
+    <input type="text" th:value="${genre.name}" placeholder="Input genre name" id="input"><br>
+    <button type="button" class="btn btn-success" id="button">Edit</button>
 </form>
+
+<script>
+    const name = document.getElementById('input').value;
+
+    document.getElementById('button').onclick = function () {
+        const value = document.getElementById('input').value;
+        $.ajax({
+            url: '/api/genres/' + name,
+            method: 'put',
+            data: {genre: value}
+        })
+        document.location.href = '/genres'
+    }
+</script>
 
 </body>
 </html>

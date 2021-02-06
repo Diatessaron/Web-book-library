@@ -1,11 +1,11 @@
-package ru.otus.homework3.controller;
+package ru.otus.homework3.page.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.homework3.domain.Book;
-import ru.otus.homework3.dto.BookRequest;
 import ru.otus.homework3.service.AuthorService;
 import ru.otus.homework3.service.BookService;
 import ru.otus.homework3.service.GenreService;
@@ -13,12 +13,12 @@ import ru.otus.homework3.service.GenreService;
 import java.util.List;
 
 @Controller
-public class BookController {
+public class BookPageController {
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
 
-    public BookController(BookService bookService, AuthorService authorService, GenreService genreService) {
+    public BookPageController(BookService bookService, AuthorService authorService, GenreService genreService) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.genreService = genreService;
@@ -29,12 +29,6 @@ public class BookController {
         model.addAttribute("authors", authorService.getAll());
         model.addAttribute("genres", genreService.getAll());
         return "bookSave";
-    }
-
-    @PostMapping("/books/add")
-    public String save(@Validated BookRequest bookRequest) {
-        bookService.saveBook(bookRequest.getTitle(), bookRequest.getAuthorName(), bookRequest.getGenreName());
-        return "redirect:/books";
     }
 
     @GetMapping("/books/title/{title}")
@@ -74,17 +68,5 @@ public class BookController {
         model.addAttribute("authors", authorService.getAll());
         model.addAttribute("genres", genreService.getAll());
         return "bookEdit";
-    }
-
-    @PostMapping("/books/edit/{oldBook}")
-    public String edit(@PathVariable String oldBook, @Validated BookRequest bookRequest) {
-        bookService.updateBook(oldBook, bookRequest.getTitle(), bookRequest.getAuthorName(), bookRequest.getGenreName());
-        return "redirect:/books";
-    }
-
-    @PostMapping("/books/{book}")
-    public String deleteByTitle(@PathVariable String book) {
-        bookService.deleteBookByTitle(book);
-        return "redirect:/books";
     }
 }

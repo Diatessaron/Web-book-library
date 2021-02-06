@@ -1,4 +1,4 @@
-package ru.otus.homework3.dto;
+package ru.otus.homework3.rest.dto;
 
 public class BookRequest {
     private String title;

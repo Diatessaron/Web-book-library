@@ -22,6 +22,7 @@
             margin-top: 10px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -29,18 +30,27 @@
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
-<form action="/authors/add" method="post">
+<form>
     <h1>Author Info:</h1>
 
     <div class="row">
-        <label for="holder-input">Name:</label>
-        <input id="holder-input" name="author" type="text" value="John Doe"/>
-    </div>
-
-    <div class="row">
-        <button type="submit">Save</button>
+        <label for="input">Name:</label>
+        <input id="input" type="text" placeholder="Input author name"/>
+        <button type="button" id="button">Save</button>
     </div>
 </form>
+
+<script>
+    document.getElementById('button').onclick = function () {
+        const value = document.getElementById('input').value;
+        $.ajax({
+            url: '/api/authors',
+            method: 'post',
+            data: {author: value}
+        })
+        document.location.href = '/authors'
+    }
+</script>
 
 </body>
 </html>

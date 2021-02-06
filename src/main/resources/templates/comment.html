@@ -14,6 +14,7 @@
             padding: 5px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -27,23 +28,47 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Book Title</th>
         <th>Content</th>
+        <th>Book Title</th>
         <th>Action</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td th:text="${comment.id}">1</td>
-        <td th:text="${comment.book.title}">Book</td>
-        <td th:text="${comment.content}">Comment</td>
-        <td>
-            <a th:href="@{'/comments/edit/{comment}'(comment=${comment.content})}"
-               href="commentEdit.html">Edit</a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script th:inline="javascript">
+    const comment = /*[[${comment.content}]]*/ '';
+    $(function () {
+        $.get('/api/comments/' + comment).done(function (comment) {
+            $('tbody').append(`
+                    <tr>
+                        <td>${comment.id}</td>
+                        <td>
+                            <p>${comment.content}</p>
+                        </td>
+                        <td>
+                            <p>${comment.book.title}</p>
+                        </td>
+                        <td>
+                            <a href="/comments/edit/${comment.content}">Edit</a>
+                        </td>
+                        <td>
+                            <input type="button" value="Delete" id="input">
+                        </td>
+                    </tr>
+                `)
+            document.getElementById('input').onclick = function () {
+                const content = comment.content
+                $.ajax({
+                    url: '/api/comments/' + content,
+                    method: 'delete'
+                })
+                document.location.href = '/comments'
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

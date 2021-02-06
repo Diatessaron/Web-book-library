@@ -18,6 +18,7 @@
             background: lightgray;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -27,12 +28,25 @@
 
 <h2>Edit</h2>
 
-<form th:object="${comment}" th:action="@{'/comments/edit/{comment}'(comment=${comment.content})}"
-      th:method="post">
-    <input type="text" th:value="${comment.content}" name="comment" placeholder="Input comment content"
+<form>
+    <input type="text" th:value="${comment.content}"placeholder="Input comment content" id="input"
            class="form-control"><br>
-    <button type="submit" class="btn btn-success">Edit</button>
+    <button type="button" class="btn btn-success" id="button">Edit</button>
 </form>
+
+<script>
+    const content = document.getElementById('input').value;
+
+    document.getElementById('button').onclick = function () {
+        const value = document.getElementById('input').value;
+        $.ajax({
+            url: '/api/comments/' + content,
+            method: 'put',
+            data: {comment: value}
+        })
+        document.location.href = '/comments'
+    }
+</script>
 
 </body>
 </html>

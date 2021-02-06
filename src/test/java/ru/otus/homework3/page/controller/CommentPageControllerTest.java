@@ -1,4 +1,4 @@
-package ru.otus.homework3.controller;
+package ru.otus.homework3.page.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,34 +6,24 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework3.domain.Comment;
+import ru.otus.homework3.service.BookServiceImpl;
 import ru.otus.homework3.service.CommentServiceImpl;
 
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CommentController.class)
-class CommentControllerTest {
+@WebMvcTest(CommentPageController.class)
+class CommentPageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private CommentServiceImpl commentService;
-
-    @Test
-    void testSaveByStatus() throws Exception {
-        when(commentService.getAll()).thenReturn(List.of
-                (new Comment("Published in 1922", "Ulysses"),
-                        new Comment("Comment", "Book")));
-
-        mockMvc.perform(post("/comments/add")
-                .param("comment", "Comment")
-                .param("book", "Book"))
-                .andExpect(status().isFound());
-    }
+    @MockBean
+    private BookServiceImpl bookService;
 
     @Test
     void testGetCommentByContentByStatus() throws Exception {
@@ -61,23 +51,5 @@ class CommentControllerTest {
 
         mockMvc.perform(get("/comments"))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    void testUpdateByStatus() throws Exception {
-        when(commentService.updateComment("Comment", "Published in 1922"))
-                .thenReturn("Comment was updated");
-
-        mockMvc.perform(post("/comments/edit/Comment")
-                .param("comment", "Published in 1922"))
-                .andExpect(status().isFound());
-    }
-
-    @Test
-    void testDeleteByNameByStatus() throws Exception {
-        when(commentService.deleteByContent("Comment")).thenReturn("Comment was deleted");
-
-        mockMvc.perform(post("/comments/Comment"))
-                .andExpect(status().isFound());
     }
 }

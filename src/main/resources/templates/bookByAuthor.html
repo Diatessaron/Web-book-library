@@ -14,6 +14,7 @@
             padding: 5px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -35,17 +36,44 @@
     </thead>
     <tbody>
     <tr>
-        <td th:text="${book.id}">1</td>
-        <td th:text="${book.title}">Book</td>
-        <td th:text="${book.author.name}">John Doe</td>
-        <td th:text="${book.genre.name}">Genre</td>
-        <td>
-            <a th:href="@{'/books/edit/{title}'(title=${book.title})}"
-               href="bookEdit.html">Edit</a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script th:inline="javascript">
+    const book = /*[[${book.title}]]*/ '';
+    $(function () {
+        $.get('/api/books/title/' + book).done(function (book) {
+            $('tbody').append(`
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>
+                            <p>${book.title}</p>
+                        </td>
+                        <td>
+                            <p>${book.author.name}</p>
+                        </td>
+                        <td>
+                            <p>${book.genre.name}</p>
+                        </td>
+                        <td>
+                            <a href="/books/edit/${book.title}">Edit</a>
+                        </td>
+                        <td>
+                            <input type="button" value="Delete" id="input">
+                        </td>
+                    </tr>
+                `)
+            document.getElementById('input').onclick = function () {
+                const title = book.title
+                $.ajax({
+                    url: '/api/books/' + title,
+                    method: 'delete'
+                })
+                document.location.href = '/books'
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

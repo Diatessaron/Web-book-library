@@ -1,4 +1,4 @@
-package ru.otus.homework3.controller;
+package ru.otus.homework3.page.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +14,13 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthorController.class)
-class AuthorControllerTest {
+@WebMvcTest(AuthorPageController.class)
+class AuthorPageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private AuthorServiceImpl authorService;
-
-    @Test
-    void shouldGetCorrectStatusAfterAuthorCreation() throws Exception {
-        when(authorService.getAll()).thenReturn(List.of(new Author("James Joyce"), new Author("Author")));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/authors/add")
-                .param("author", "Author"))
-                .andExpect(status().isFound());
-    }
 
     @Test
     void testGetAuthorByNameByCorrectStatus() throws Exception {
@@ -45,22 +36,5 @@ class AuthorControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/authors"))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    void testUpdateByCorrectStatus() throws Exception {
-        when(authorService.updateAuthor("James Joyce", "Author")).thenReturn("Author was updated");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/authors/edit/James Joyce")
-                .param("author", "Author"))
-                .andExpect(status().isFound());
-    }
-
-    @Test
-    void deleteByName() throws Exception {
-        when(authorService.deleteAuthorByName("Author")).thenReturn("Author was deleted");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/authors/Author"))
-                .andExpect(status().isFound());
     }
 }

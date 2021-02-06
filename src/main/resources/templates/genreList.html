@@ -19,6 +19,7 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -41,27 +42,41 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="genre : ${genres}">
-        <td th:text="${genre.id}">1</td>
-        <td>
-            <a th:text="${genre.name}" th:href="@{'/genres/{genre}'(genre=${genre.name})}"
-                    href="genre.html">Genre</a>
-        </td>
-        <td>
-            <a th:href="@{'/genres/edit/{genre}'(genre=${genre.name})}"
-               href="genreEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${genre}" th:action="@{'/genres/{genre}'(genre=${genre.name})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const name = btn.name
+        $.ajax({
+            url: '/api/genres/' + name,
+            method: 'delete'
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/genres').done(function (genres) {
+            genres.forEach(function (genre) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${genre.id}</td>
+                        <td>
+                            <a href="/genres/${genre.name}">${genre.name}</a>
+                        </td>
+                        <td>
+                            <a href="/genres/edit/${genre.name}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${genre.name}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
 
 </body>
 </html>

@@ -19,6 +19,7 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -41,26 +42,41 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="author : ${authors}">
-        <td th:text="${author.id}">1</td>
-        <td>
-            <a th:text="${author.name}" th:href="@{'/authors/{author}'(author=${author.name})}"
-               href="author.html">John Doe</a>
-        </td>
-        <td>
-            <a th:href="@{'/authors/edit/{author}'(author=${author.name})}"
-               href="authorEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${author}" th:action="@{'/authors/{author}'(author=${author.name})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const name = btn.name
+        $.ajax({
+            url: '/api/authors/' + name,
+            method: 'delete'
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/authors').done(function (authors) {
+            authors.forEach(function (author) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${author.id}</td>
+                        <td>
+                            <a href="/authors/${author.name}">${author.name}</a>
+                        </td>
+                        <td>
+                            <a href="/authors/edit/${author.name}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${author.name}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+
 </body>
 </html>

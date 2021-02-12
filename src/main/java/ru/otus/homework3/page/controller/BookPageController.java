@@ -25,28 +25,28 @@ public class BookPageController {
     }
 
     @GetMapping("/books/add")
-    public String savePage(Model model){
+    public String savePage(Model model) {
         model.addAttribute("authors", authorService.getAll());
         model.addAttribute("genres", genreService.getAll());
         return "bookSave";
     }
 
-    @GetMapping("/books/title/{title}")
-    public String getBookByTitle(@PathVariable String title, Model model) {
-        model.addAttribute("book", bookService.getBookByTitle(title));
-        return "bookByTitle";
+    @GetMapping("/books/id")
+    public String getBookById(@RequestParam String id, Model model) {
+        model.addAttribute("book", bookService.getBookById(id));
+        return "bookById";
     }
 
     @GetMapping("/books/author/{author}")
     public String getBookByAuthor(@PathVariable String author, Model model) {
         model.addAttribute("book", bookService.getBookByAuthor(author));
-        return "bookByAuthor";
+        return "booksByAuthor";
     }
 
     @GetMapping("/books/genre/{genre}")
     public String getBookByGenre(@PathVariable String genre, Model model) {
         model.addAttribute("book", bookService.getBookByGenre(genre));
-        return "bookByGenre";
+        return "booksByGenre";
     }
 
     @GetMapping("/books/comment")
@@ -62,9 +62,9 @@ public class BookPageController {
         return "bookList";
     }
 
-    @GetMapping("/books/edit/{oldBook}")
-    public String editPage(@PathVariable String oldBook, Model model){
-        model.addAttribute("book", bookService.getBookByTitle(oldBook));
+    @GetMapping("/books/edit")
+    public String editPage(@RequestParam String id, Model model) {
+        model.addAttribute("book", bookService.getBookById(id));
         model.addAttribute("authors", authorService.getAll());
         model.addAttribute("genres", genreService.getAll());
         return "bookEdit";

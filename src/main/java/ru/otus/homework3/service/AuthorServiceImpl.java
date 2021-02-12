@@ -29,8 +29,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional(readOnly = true)
     @Override
-    public Author getAuthorByName(String name) {
-        return getAuthor(name);
+    public Author getAuthorById(String id){
+        return authorRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Incorrect author id"));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Author> getAuthorByName(String name) {
+        return authorRepository.findByName(name);
     }
 
     @Transactional(readOnly = true)
@@ -41,9 +47,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional
     @Override
-    public String updateAuthor(String oldAuthorName, String name) {
-        final Author author = getAuthor(oldAuthorName);
+    public String updateAuthor(String id, String name) {
+        final Author author = authorRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Incorrect author id"));
+        final String oldAuthorName = author.getName();
         author.setName(name);
+
         authorRepository.save(author);
 
         final List<Book> bookList = bookRepository.findByAuthor_Name(oldAuthorName);
@@ -58,23 +66,13 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Transactional
     @Override
-    public String deleteAuthorByName(String name) {
-        final Author author = getAuthor(name);
+    public String deleteAuthor(String id) {
+        final Author author = authorRepository.findById(id).orElseThrow
+                (() -> new IllegalArgumentException("Incorrect author id"));
 
-        authorRepository.deleteByName(name);
-        bookRepository.deleteByAuthor_Name(name);
+        authorRepository.deleteById(id);
+        bookRepository.deleteByAuthor_Name(author.getName());
 
         return String.format("%s was deleted", author.getName());
-    }
-
-    private Author getAuthor(String name){
-        final List<Author> authors = authorRepository.findByName(name);
-
-        if (authors.isEmpty())
-            throw new IllegalArgumentException("Incorrect author name. Please, specify correct argument.");
-        else if (authors.size() > 1)
-            throw new IllegalArgumentException("Non unique result.");
-
-        return authors.get(0);
     }
 }

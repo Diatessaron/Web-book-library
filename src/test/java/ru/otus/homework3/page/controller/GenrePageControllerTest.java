@@ -24,9 +24,10 @@ class GenrePageControllerTest {
 
     @Test
     void testGetGenreByNameByStatus() throws Exception {
-        when(genreService.getGenreByName("Genre")).thenReturn(new Genre("Genre"));
+        when(genreService.getGenreById("Genre")).thenReturn(new Genre("Genre"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/genres/Genre"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/genres/id")
+                .param("id", "Genre"))
                 .andExpect(status().isOk());
     }
 

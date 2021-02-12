@@ -1,9 +1,12 @@
 package ru.otus.homework3.rest.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.homework3.domain.Author;
+import ru.otus.homework3.rest.dto.AuthorRequest;
 import ru.otus.homework3.service.AuthorService;
 
 import java.util.List;
@@ -16,14 +19,21 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    @PostMapping("/api/authors")
-    public ResponseEntity<String> create(@RequestParam(name = "author") String authorName) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorService.saveAuthor(authorName));
+    @PostMapping(value = "/api/authors",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> create(@Validated  @RequestBody AuthorRequest authorRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authorService.saveAuthor
+                (authorRequest.getAuthor()));
     }
 
-    @GetMapping("/api/authors/{name}")
-    public ResponseEntity<Author> getAuthorByName(@PathVariable String name) {
-        return ResponseEntity.status(HttpStatus.OK).body(authorService.getAuthorByName(name));
+    @GetMapping("/api/authors/id")
+    public ResponseEntity<Author> getAuthorById(@RequestParam String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(authorService.getAuthorById(id));
+    }
+
+    @GetMapping("/api/authors/{author}")
+    public ResponseEntity<List<Author>> getAuthorByName(@PathVariable String author) {
+        return ResponseEntity.status(HttpStatus.OK).body(authorService.getAuthorByName(author));
     }
 
     @GetMapping("/api/authors")
@@ -31,13 +41,16 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.OK).body(authorService.getAll());
     }
 
-    @PutMapping("/api/authors/{oldAuthor}")
-    public ResponseEntity<String> edit(@PathVariable String oldAuthor, @RequestParam(name = "author") String authorName) {
-        return ResponseEntity.status(HttpStatus.OK).body(authorService.updateAuthor(oldAuthor, authorName));
+    @PutMapping(value = "/api/authors",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> edit(@Validated @RequestBody AuthorRequest authorRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(authorService.updateAuthor
+                (authorRequest.getId(), authorRequest.getAuthor()));
     }
 
-    @DeleteMapping("/api/authors/{author}")
-    public ResponseEntity<String> deleteByName(@PathVariable String author) {
-        return ResponseEntity.status(HttpStatus.OK).body(authorService.deleteAuthorByName(author));
+    @DeleteMapping(value = "/api/authors",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteByName(@Validated @RequestBody AuthorRequest authorRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(authorService.deleteAuthor(authorRequest.getId()));
     }
 }

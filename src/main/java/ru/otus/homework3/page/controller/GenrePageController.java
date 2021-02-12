@@ -21,9 +21,9 @@ public class GenrePageController {
         return "genreSave";
     }
 
-    @GetMapping("/genres/{genre}")
-    public String getGenreByName(@PathVariable String genre, Model model) {
-        model.addAttribute("genre", genreService.getGenreByName(genre));
+    @GetMapping("/genres/id")
+    public String getGenreById(@RequestParam String id, Model model) {
+        model.addAttribute("genre", genreService.getGenreById(id));
         return "genre";
     }
 
@@ -34,9 +34,9 @@ public class GenrePageController {
         return "genreList";
     }
 
-    @GetMapping("/genres/edit/{oldGenre}")
-    public String editPage(@PathVariable String oldGenre, Model model) {
-        model.addAttribute("genre", genreService.getGenreByName(oldGenre));
+    @GetMapping("/genres/edit")
+    public String editPage(@RequestParam String id, Model model) {
+        model.addAttribute("genre", genreService.getGenreById(id));
         return "genreEdit";
     }
 }

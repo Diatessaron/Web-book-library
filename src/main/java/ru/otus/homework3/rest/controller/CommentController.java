@@ -1,6 +1,7 @@
 package ru.otus.homework3.rest.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,20 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/api/comments")
-    public ResponseEntity<String> save(@Validated CommentRequest commentRequest) {
+    @PostMapping(value = "/api/comments",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> save(@Validated @RequestBody CommentRequest commentRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.saveComment
                 (commentRequest.getBook(), commentRequest.getContent()));
     }
 
+    @GetMapping("/api/comments/id")
+    public ResponseEntity<Comment> getCommentById(@RequestParam String id){
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentById(id));
+    }
+
     @GetMapping("/api/comments/{comment}")
-    public ResponseEntity<Comment> getCommentByContent(@PathVariable String comment) {
+    public ResponseEntity<List<Comment>> getCommentByContent(@PathVariable String comment) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentByContent(comment));
     }
 
@@ -39,14 +46,16 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getAll());
     }
 
-    @PutMapping("/api/comments/{oldComment}")
-    public ResponseEntity<String> edit(@PathVariable String oldComment,
-                                       @RequestParam("comment") String comment) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(oldComment, comment));
+    @PutMapping(value = "/api/comments",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> edit(@Validated @RequestBody CommentRequest commentRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment
+                (commentRequest.getId(), commentRequest.getContent()));
     }
 
-    @DeleteMapping("/api/comments/{comment}")
-    public ResponseEntity<String> deleteByContent(@PathVariable String comment) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.deleteByContent(comment));
+    @DeleteMapping(value = "/api/comments",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteByContent(@Validated @RequestBody CommentRequest commentRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.deleteComment(commentRequest.getId()));
     }
 }

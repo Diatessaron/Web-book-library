@@ -22,13 +22,15 @@
 </head>
 <body>
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
 <h2>Edit</h2>
 
 <form>
-    <input type="text" th:value="${book.title}" placeholder="Input book title" id="input-title"><br>
+    <input type="text" th:name="${book.id}" th:value="${book.title}" placeholder="Input book title"
+           id="input-title"><br>
     <input type="text" th:value="${book.author.name}" placeholder="Input book author"
            id="input-author" list="authorList">
     <datalist id="authorList" th:each="author : ${authors}">
@@ -46,14 +48,16 @@
     const book = document.getElementById('input-title').value;
 
     document.getElementById('button').onclick = function () {
+        const id = document.getElementById('input-title').name;
         const title = document.getElementById('input-title').value;
         const author = document.getElementById('input-author').value;
         const genre = document.getElementById('input-genre').value;
 
         $.ajax({
-            url: '/api/books/' + book,
+            url: '/api/books/',
             method: 'put',
-            data: {title: title, authorName: author, genreName: genre}
+            contentType: "application/json",
+            data: JSON.stringify({id: id, title: title, authorName: author, genreName: genre})
         })
         document.location.href = '/books'
     }

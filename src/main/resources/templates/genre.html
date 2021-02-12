@@ -19,6 +19,7 @@
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
@@ -37,9 +38,9 @@
 </table>
 
 <script th:inline="javascript">
-    const genre = /*[[${genre.name}]]*/ '';
+    const genre = /*[[${genre.id}]]*/ '';
     $(function () {
-        $.get('/api/genres/' + genre).done(function (genre) {
+        $.get('/api/genres/id?id=' + genre).done(function (genre) {
             $('tbody').append(`
                     <tr>
                         <td>${genre.id}</td>
@@ -47,7 +48,7 @@
                             <p>${genre.name}</p>
                         </td>
                         <td>
-                            <a href="/genres/edit/${genre.name}">Edit</a>
+                            <a href="/genres/edit?id=${genre.id}">Edit</a>
                         </td>
                         <td>
                             <input type="button" value="Delete" id="input">
@@ -55,18 +56,18 @@
                     </tr>
                 `)
             document.getElementById('input').onclick = function () {
-                const name = genre.name
+                const value = genre.id
                 $.ajax({
-                    url: '/api/genres/' + name,
-                    method: 'delete'
+                    url: '/api/genres/',
+                    method: 'delete',
+                    contentType: "application/json",
+                    data: JSON.stringify({id: value})
                 })
                 document.location.href = '/genres'
             }
         });
     });
 </script>
-
-</body>
 
 </body>
 </html>

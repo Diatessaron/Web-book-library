@@ -26,10 +26,11 @@ class CommentPageControllerTest {
     private BookServiceImpl bookService;
 
     @Test
-    void testGetCommentByContentByStatus() throws Exception {
-        when(commentService.getCommentByContent("Comment")).thenReturn(new Comment("Comment", "Book"));
+    void testGetCommentByIdByStatus() throws Exception {
+        when(commentService.getCommentById("Comment")).thenReturn(new Comment("Comment", "Book"));
 
-        mockMvc.perform(get("/comments/Comment"))
+        mockMvc.perform(get("/comments/id")
+                .param("id", "Comment"))
                 .andExpect(status().isOk());
     }
 

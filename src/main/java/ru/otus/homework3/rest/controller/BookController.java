@@ -1,6 +1,7 @@
 package ru.otus.homework3.rest.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +19,31 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PostMapping("/api/books")
-    public ResponseEntity<Object> save(@Validated BookRequest bookRequest) {
+    @PostMapping(value = "/api/books",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> save(@Validated @RequestBody BookRequest bookRequest) {
         bookService.saveBook(bookRequest.getTitle(), bookRequest.getAuthorName(), bookRequest.getGenreName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/api/books/id")
+    public ResponseEntity<Book> getBookById(@RequestParam String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.getBookById(id));
+    }
+
     @GetMapping("/api/books/title/{title}")
-    public ResponseEntity<Book> getBookByTitle(@PathVariable String title) {
+    public ResponseEntity<List<Book>> getBookByTitle(@PathVariable String title) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBookByTitle(title));
+    }
+
+    @GetMapping("/api/books/author/{author}")
+    public ResponseEntity<List<Book>> getBookByAuthor(@PathVariable String author) {
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.getBookByAuthor(author));
+    }
+
+    @GetMapping("/api/books/genre/{genre}")
+    public ResponseEntity<List<Book>> getBookByGenre(@PathVariable String genre) {
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.getBookByGenre(genre));
     }
 
     @GetMapping("/api/books")
@@ -34,15 +51,18 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getAll());
     }
 
-    @PutMapping("/api/books/{oldBook}")
-    public ResponseEntity<Object> edit(@PathVariable String oldBook, @Validated BookRequest bookRequest) {
-        bookService.updateBook(oldBook, bookRequest.getTitle(), bookRequest.getAuthorName(), bookRequest.getGenreName());
+    @PutMapping(value = "/api/books",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> edit(@Validated @RequestBody BookRequest bookRequest) {
+        bookService.updateBook(bookRequest.getId(), bookRequest.getTitle(),
+                bookRequest.getAuthorName(), bookRequest.getGenreName());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @DeleteMapping("/api/books/{book}")
-    public ResponseEntity<Object> deleteByTitle(@PathVariable String book) {
-        bookService.deleteBookByTitle(book);
+    @DeleteMapping(value = "/api/books",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deleteByTitle(@Validated @RequestBody BookRequest bookRequest) {
+        bookService.deleteBook(bookRequest.getId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -31,18 +31,19 @@ class BookPageControllerTest {
     private GenreServiceImpl genreService;
 
     @Test
-    void testGetBookByTitleByStatus() throws Exception {
-        when(bookService.getBookByTitle("Book")).thenReturn(new Book("Book", new Author("Author"),
+    void testGetBookByIdByStatus() throws Exception {
+        when(bookService.getBookById("Book")).thenReturn(new Book("Book", new Author("Author"),
                 new Genre("Genre")));
 
-        mockMvc.perform(get("/books/title/Book"))
+        mockMvc.perform(get("/books/id")
+                .param("id", "Book"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetBookByAuthorByStatus() throws Exception {
-        when(bookService.getBookByAuthor("Author")).thenReturn(new Book("Book", new Author("Author"),
-                new Genre("Genre")));
+        when(bookService.getBookByAuthor("Author")).thenReturn(List.of(new Book("Book", new Author("Author"),
+                new Genre("Genre"))));
 
         mockMvc.perform(get("/books/author/Author"))
                 .andExpect(status().isOk());
@@ -50,8 +51,8 @@ class BookPageControllerTest {
 
     @Test
     void testGetBookByGenreByStatus() throws Exception {
-        when(bookService.getBookByGenre("Genre")).thenReturn(new Book("Book", new Author("Author"),
-                new Genre("Genre")));
+        when(bookService.getBookByGenre("Genre")).thenReturn(List.of(new Book("Book", new Author("Author"),
+                new Genre("Genre"))));
 
         mockMvc.perform(get("/books/genre/Genre"))
                 .andExpect(status().isOk());

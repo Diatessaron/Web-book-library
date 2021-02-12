@@ -23,25 +23,28 @@
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
 <h2>Edit</h2>
 
 <form>
-    <input type="text" th:value="${author.name}" placeholder="Input author name" id="input"><br>
+    <input type="text" th:name="${author.id}" th:value="${author.name}" placeholder="Input author name" id="input"
+           class="form-control"><br>
     <button type="button" class="btn btn-success" id="button">Edit</button>
 </form>
 
 <script>
-    const name = document.getElementById('input').value;
-
     document.getElementById('button').onclick = function () {
+        const id = document.getElementById('input').name;
         const value = document.getElementById('input').value;
+
         $.ajax({
-            url: '/api/authors/' + name,
+            url: '/api/authors',
             method: 'put',
-            data: {author: value}
+            contentType: "application/json",
+            data: JSON.stringify({id: id, author: value})
         })
         document.location.href = '/authors'
     }

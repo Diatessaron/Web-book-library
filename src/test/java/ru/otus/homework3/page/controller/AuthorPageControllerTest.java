@@ -23,10 +23,11 @@ class AuthorPageControllerTest {
     private AuthorServiceImpl authorService;
 
     @Test
-    void testGetAuthorByNameByCorrectStatus() throws Exception {
-        when(authorService.getAuthorByName("Author")).thenReturn(new Author("Author"));
+    void testGetAuthorByIdByCorrectStatus() throws Exception {
+        when(authorService.getAuthorById("Author")).thenReturn(new Author("Author"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/authors/Author"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/authors/id")
+                .param("id", "Author"))
                 .andExpect(status().isOk());
     }
 

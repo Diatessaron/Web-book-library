@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.homework3.domain.Comment;
 import ru.otus.homework3.service.BookService;
 import ru.otus.homework3.service.CommentService;
@@ -26,9 +27,9 @@ public class CommentPageController {
         return "commentSave";
     }
 
-    @GetMapping("/comments/{comment}")
-    public String getCommentByContent(@PathVariable String comment, Model model) {
-        model.addAttribute("comment", commentService.getCommentByContent(comment));
+    @GetMapping("/comments/id")
+    public String getCommentById(@RequestParam String id, Model model) {
+        model.addAttribute("comment", commentService.getCommentById(id));
         return "comment";
     }
 
@@ -45,9 +46,9 @@ public class CommentPageController {
         return "commentList";
     }
 
-    @GetMapping("/comments/edit/{oldComment}")
-    public String editPage(@PathVariable String oldComment, Model model) {
-        model.addAttribute("comment", commentService.getCommentByContent(oldComment));
+    @GetMapping("/comments/edit")
+    public String editPage(@RequestParam String id, Model model) {
+        model.addAttribute("comment", commentService.getCommentById(id));
         return "commentEdit";
     }
 }

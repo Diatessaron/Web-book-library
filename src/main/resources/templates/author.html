@@ -19,6 +19,7 @@
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
@@ -37,9 +38,9 @@
 </table>
 
 <script th:inline="javascript">
-    const author = /*[[${author.name}]]*/ '';
+    const author = /*[[${author.id}]]*/ '';
     $(function () {
-        $.get('/api/authors/' + author).done(function (author) {
+        $.get('/api/authors/id?id=' + author).done(function (author) {
             $('tbody').append(`
                     <tr>
                         <td>${author.id}</td>
@@ -47,7 +48,7 @@
                             <p>${author.name}</p>
                         </td>
                         <td>
-                            <a href="/authors/edit/${author.name}">Edit</a>
+                            <a href="/authors/edit?id=${author.id}">Edit</a>
                         </td>
                         <td>
                             <input type="button" value="Delete" id="input">
@@ -55,10 +56,12 @@
                     </tr>
                 `)
             document.getElementById('input').onclick = function () {
-                const name = author.name
+                const value = author.id
                 $.ajax({
-                    url: '/api/authors/' + name,
-                    method: 'delete'
+                    url: '/api/authors',
+                    method: 'delete',
+                    contentType: "application/json",
+                    data: JSON.stringify({id: value})
                 })
                 document.location.href = '/authors'
             }

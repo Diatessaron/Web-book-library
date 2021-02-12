@@ -41,29 +41,33 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Book getBookByTitle(String title) {
-        return getBook(bookRepository.findByTitle(title));
+    public Book getBookById(String id) {
+        return bookRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Incorrect book id"));
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Book getBookByAuthor(String author) {
-        return getBook(bookRepository.findByAuthor_Name(author));
+    public List<Book> getBookByTitle(String title) {
+        return bookRepository.findByTitle(title);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Book getBookByGenre(String genre) {
-        return getBook(bookRepository.findByGenre_Name(genre));
+    public List<Book> getBookByAuthor(String author) {
+        return bookRepository.findByAuthor_Name(author);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Book getBookByComment(String comment) {
-        final List<Book> bookList = bookRepository.findByTitle(commentRepository.findByContent(comment)
-                .orElseThrow(() -> new IllegalArgumentException("Incorrect book comment")).getBook().getTitle());
+    public List<Book> getBookByGenre(String genre) {
+        return bookRepository.findByGenre_Name(genre);
+    }
 
-        return getBook(bookList);
+    @Transactional(readOnly = true)
+    @Override
+    public Book getBookByComment(String commentId) {
+        return bookRepository.findByTitle(commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Incorrect comment id")).getBook().getTitle()).get(0);
     }
 
     @Transactional(readOnly = true)
@@ -74,12 +78,13 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public void updateBook(String oldBookTitle, String title, String authorNameParameter,
+    public void updateBook(String id, String title, String authorNameParameter,
                            String genreNameParameter) {
         Author author = getAuthor(authorNameParameter);
         Genre genre = getGenre(genreNameParameter);
 
-        final Book book = getBook(bookRepository.findByTitle(oldBookTitle));
+        final Book book = bookRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Incorrect book id"));
+        final String oldBookTitle = book.getTitle();
         book.setAuthor(author);
         book.setGenre(genre);
         book.setTitle(title);
@@ -94,18 +99,10 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public void deleteBookByTitle(String title) {
-        bookRepository.deleteByTitle(title);
-        commentRepository.deleteByBook_Title(title);
-    }
-
-    private Book getBook(List<Book> bookList){
-        if (bookList.size() > 1)
-            throw new IllegalArgumentException("Not unique result. Please, specify correct argument.");
-        else if (bookList.isEmpty())
-            throw new IllegalArgumentException("Incorrect book title");
-
-        return bookList.get(0);
+    public void deleteBook(String id) {
+        commentRepository.deleteByBook_Title(bookRepository.findById(id).orElseThrow
+                (() -> new IllegalArgumentException("Incorrect book id")).getTitle());
+        bookRepository.deleteById(id);
     }
 
     private Author getAuthor(String authorName) {

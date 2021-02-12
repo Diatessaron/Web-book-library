@@ -1,15 +1,21 @@
 package ru.otus.homework3.rest.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework3.domain.Author;
 import ru.otus.homework3.domain.Book;
 import ru.otus.homework3.domain.Genre;
+import ru.otus.homework3.rest.dto.BookRequest;
 import ru.otus.homework3.service.BookServiceImpl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
@@ -25,21 +31,32 @@ class BookControllerTest {
     @MockBean
     private BookServiceImpl bookService;
 
+    private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+            MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
+
     @Test
     void testCreateByStatus() throws Exception {
-        when(bookService.getAll()).thenReturn(List.of(new Book("Modernist novel",
-                        new Author("James Joyce"), new Genre("Modernist novel")),
-                new Book("Book", new Author("Author"), new Genre("Genre"))));
+        final Book book = new Book("Modernist novel",
+                new Author("James Joyce"), new Genre("Modernist novel"));
 
-        mockMvc.perform(post("/api/books")
-                .param("book", "Book"))
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setTitle(book.getTitle());
+        bookRequest.setAuthorName(book.getAuthor().getName());
+        bookRequest.setGenreName(book.getGenre().getName());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(bookRequest);
+
+        mockMvc.perform(post("/api/books").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void testGetBookByTitleByStatus() throws Exception {
-        when(bookService.getBookByTitle("Book")).thenReturn(new Book("Book", new Author("Author"),
-                new Genre("Genre")));
+        when(bookService.getBookByTitle("Book")).thenReturn(List.of(new Book("Book", new Author("Author"),
+                new Genre("Genre"))));
 
         mockMvc.perform(get("/api/books/title/Book"))
                 .andExpect(status().isOk());
@@ -57,21 +74,44 @@ class BookControllerTest {
 
     @Test
     void testUpdateByStatus() throws Exception {
+        final Book book = new Book("Book",
+                new Author("Author"), new Genre("Genre"));
+
         doNothing().when(bookService).updateBook
                 ("Ulysses", "Book", "Author", "Genre");
 
-        mockMvc.perform(put("/api/books/Ulysses")
-                .param("title", "Book")
-                .param("authorName", "Author")
-                .param("genreName", "Genre"))
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setTitle(book.getTitle());
+        bookRequest.setAuthorName(book.getAuthor().getName());
+        bookRequest.setGenreName(book.getGenre().getName());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(bookRequest);
+
+        mockMvc.perform(put("/api/books").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testDeleteByStatus() throws Exception {
-        doNothing().when(bookService).deleteBookByTitle("Ulysses");
+        final Book book = new Book("Book",
+                new Author("Author"), new Genre("Genre"));
 
-        mockMvc.perform(delete("/api/books/Ulysses"))
+        doNothing().when(bookService).deleteBook("Ulysses");
+
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setTitle(book.getTitle());
+        bookRequest.setAuthorName(book.getAuthor().getName());
+        bookRequest.setGenreName(book.getGenre().getName());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(bookRequest);
+
+        mockMvc.perform(delete("/api/books").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().isOk());
     }
 }

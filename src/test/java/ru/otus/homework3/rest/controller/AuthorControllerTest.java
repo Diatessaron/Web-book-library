@@ -1,17 +1,22 @@
 package ru.otus.homework3.rest.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.otus.homework3.domain.Author;
+import ru.otus.homework3.rest.dto.AuthorRequest;
 import ru.otus.homework3.service.AuthorServiceImpl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,19 +28,35 @@ class AuthorControllerTest {
     @MockBean
     private AuthorServiceImpl authorService;
 
+    private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+            MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
+
     @Test
     void testCreateByStatus() throws Exception {
-        when(authorService.getAll()).thenReturn(List.of(new Author("James Joyce"),
-                new Author("Author")));
+        AuthorRequest authorRequest = new AuthorRequest();
+        authorRequest.setAuthor("Author");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(authorRequest);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/authors")
-                .param("author", "Author"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/authors").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().isCreated());
     }
 
     @Test
+    void testGetAuthorByIdByStatus() throws Exception {
+        when(authorService.getAuthorById("id")).thenReturn(new Author("Author"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/authors/id")
+                .param("id", "id"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void testGetAuthorByNameByStatus() throws Exception {
-        when(authorService.getAuthorByName("Author")).thenReturn(new Author("Author"));
+        when(authorService.getAuthorByName("Author")).thenReturn(List.of(new Author("Author")));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/authors/Author"))
                 .andExpect(status().isOk());
@@ -52,19 +73,35 @@ class AuthorControllerTest {
 
     @Test
     void testEditByStatus() throws Exception {
-        when(authorService.updateAuthor("James Joyce", "Author"))
+        when(authorService.updateAuthor("id", "Author"))
                 .thenReturn("Author was updated");
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/authors/James Joyce")
-                .param("author", "Author"))
+        AuthorRequest authorRequest = new AuthorRequest();
+        authorRequest.setId("id");
+        authorRequest.setAuthor("Author");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(authorRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/authors").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testDeleteByNameByStatus() throws Exception {
-        when(authorService.deleteAuthorByName("Author")).thenReturn("Author was deleted");
+        when(authorService.deleteAuthor("Author")).thenReturn("Author was deleted");
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/authors/Author"))
+        AuthorRequest authorRequest = new AuthorRequest();
+        authorRequest.setId("Author");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(authorRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/authors").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().isOk());
     }
 }

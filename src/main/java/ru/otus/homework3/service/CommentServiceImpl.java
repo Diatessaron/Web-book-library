@@ -22,27 +22,30 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public String saveComment(String bookTitle, String commentContent) {
-        final String book = getBook(bookRepository.findByTitle(bookTitle)).getTitle();
-        final Comment comment = new Comment(commentContent, book);
+        final Comment comment = new Comment(commentContent, bookTitle);
 
         commentRepository.save(comment);
 
-        return "You successfully added a comment to " + book;
+        return "You successfully added a comment to " + bookTitle;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Comment getCommentByContent(String content) {
-        return commentRepository.findByContent(content).orElseThrow
-                (() -> new IllegalArgumentException("Incorrect comment content"));
+    public Comment getCommentById(String id){
+        return commentRepository.findById(id).orElseThrow
+                (() -> new IllegalArgumentException("Incorrect comment id"));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Comment> getCommentByContent(String content) {
+        return commentRepository.findByContent(content);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Comment> getCommentsByBook(String bookTitle) {
-        final Book book = getBook(bookRepository.findByTitle(bookTitle));
-
-        return commentRepository.findByBook_Title(book.getTitle());
+        return commentRepository.findByBook_Title(bookTitle);
     }
 
     @Transactional(readOnly = true)
@@ -53,39 +56,26 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public String updateComment(String oldCommentContent, String commentContent) {
-        final Comment comment = commentRepository.findByContent
-                (oldCommentContent).orElseThrow
-                (() -> new IllegalArgumentException("Incorrect old comment content"));
+    public String updateComment(String id, String commentContent) {
+        final Comment comment = commentRepository.findById(id).orElseThrow
+                (() -> new IllegalArgumentException("Incorrect comment id"));
 
-        final Book book = getBook(bookRepository.findByTitle(comment.getBook().getTitle()));
         comment.setContent(commentContent);
-        comment.setBook(book.getTitle());
+        comment.setBook(comment.getBook().getTitle());
 
         commentRepository.save(comment);
 
-        return book.getTitle() + " comment was updated";
+        return comment.getBook().getTitle() + " comment was updated";
     }
 
     @Transactional
     @Override
-    public String deleteByContent(String content) {
-        final List<Book> bookList = bookRepository.findByTitle(commentRepository.findByContent(content)
-                .orElseThrow(() -> new IllegalArgumentException("Incorrect comment content")).getBook().getTitle());
+    public String deleteComment(String id) {
+        final Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Incorrect comment id"));
 
-        final Book book = getBook(bookList);
+        commentRepository.deleteById(id);
 
-        commentRepository.deleteByContent(content);
-
-        return book.getTitle() + " comment was deleted";
-    }
-
-    private Book getBook(List<Book> bookList) {
-        if (bookList.size() > 1)
-            throw new IllegalArgumentException("Not unique result. Please, specify correct argument.");
-        else if (bookList.isEmpty())
-            throw new IllegalArgumentException("Incorrect book title");
-
-        return bookList.get(0);
+        return comment.getBook().getTitle() + " comment was deleted";
     }
 }

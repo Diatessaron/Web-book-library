@@ -24,6 +24,7 @@
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
     <nav class="my-2 my-md-0 me-md-3">
         <a th:href="@{/genres/add}" href="genreSave.html" class="btn btn-outline-primary">Add genre</a>
@@ -47,10 +48,12 @@
 
 <script>
     function deleteRow(btn) {
-        const name = btn.name
+        const value = btn.name
         $.ajax({
-            url: '/api/genres/' + name,
-            method: 'delete'
+            url: '/api/genres/',
+            method: 'delete',
+            contentType: "application/json",
+            data: JSON.stringify({id: value})
         })
         window.location.reload();
     }
@@ -62,13 +65,13 @@
                     <tr>
                         <td>${genre.id}</td>
                         <td>
-                            <a href="/genres/${genre.name}">${genre.name}</a>
+                            <a href="/genres/id?id=${genre.id}">${genre.name}</a>
                         </td>
                         <td>
-                            <a href="/genres/edit/${genre.name}">Edit</a>
+                            <a href="/genres/edit?id=${genre.id}">Edit</a>
                         </td>
                         <td>
-                            <input name="${genre.name}" type="button" value="Delete" id="input"
+                            <input name="${genre.id}" type="button" value="Delete" id="input"
                             onclick="deleteRow(this)">
                         </td>
                     </tr>

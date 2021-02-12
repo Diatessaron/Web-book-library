@@ -1,9 +1,12 @@
 package ru.otus.homework3.rest.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.homework3.domain.Genre;
+import ru.otus.homework3.rest.dto.GenreRequest;
 import ru.otus.homework3.service.GenreService;
 
 import java.util.List;
@@ -16,9 +19,16 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-    @PostMapping("/api/genres")
-    public ResponseEntity<String> create(@RequestParam(name = "genre") String genreName) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(genreService.saveGenre(genreName));
+    @PostMapping(value = "/api/genres",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> create(@Validated @RequestBody GenreRequest genreRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(genreService.saveGenre
+                (genreRequest.getGenre()));
+    }
+
+    @GetMapping("/api/genres/id")
+    public ResponseEntity<Genre> getGenreById(@RequestParam String id){
+        return ResponseEntity.status(HttpStatus.OK).body(genreService.getGenreById(id));
     }
 
     @GetMapping("/api/genres/{genre}")
@@ -31,13 +41,16 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.OK).body(genreService.getAll());
     }
 
-    @PutMapping("/api/genres/{oldGenre}")
-    public ResponseEntity<String> edit(@PathVariable String oldGenre, @RequestParam(name = "genre") String genreName) {
-        return ResponseEntity.status(HttpStatus.OK).body(genreService.updateGenre(oldGenre, genreName));
+    @PutMapping(value = "/api/genres",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> edit(@Validated  @RequestBody GenreRequest genreRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(genreService.updateGenre
+                (genreRequest.getId(), genreRequest.getGenre()));
     }
 
-    @DeleteMapping("/api/genres/{genre}")
-    public ResponseEntity<String> deleteByName(@PathVariable String genre) {
-        return ResponseEntity.status(HttpStatus.OK).body(genreService.deleteGenreByName(genre));
+    @DeleteMapping(value = "/api/genres",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteByName(@Validated @RequestBody GenreRequest genreRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(genreService.deleteGenre(genreRequest.getId()));
     }
 }

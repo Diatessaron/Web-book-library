@@ -22,32 +22,42 @@
             margin-top: 10px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
 </header>
 
-<form action="/comments/add" method="post">
+<form>
     <h1>Comment Info:</h1>
 
-    <div class="row">
-        <label for="holder-input">Content:</label>
-        <input id="holder-input" name="content" type="text" value="Content"/>
-    </div>
-    <div class="row">
-        <label for="holder-input2">Book:</label>
-        <input id="holder-input2" name="book" type="text" list="bookList"/>
-        <datalist id="bookList" th:each="book : ${books}">
-            <option th:text="${book.title}">Book</option>
-        </datalist>
-    </div>
-
-    <div class="row">
-        <button type="submit">Save</button>
-    </div>
+    <label for="input">Content:</label>
+    <input id="input" type="text" value="Content"/>
+    <label for="input2">Book:</label>
+    <input id="input2" type="text" list="bookList"/>
+    <datalist id="bookList" th:each="book : ${books}">
+        <option th:text="${book.title}">Book</option>
+    </datalist>
+    <button type="button" id="button">Save</button>
 </form>
+
+<script>
+    document.getElementById('button').onclick = function () {
+        const content = document.getElementById('input').value;
+        const book = document.getElementById('input2').value;
+
+        $.ajax({
+            url: '/api/comments',
+            method: 'post',
+            contentType: "application/json",
+            data: JSON.stringify({content: content, book: book})
+        })
+        document.location.href = '/comments'
+    }
+</script>
 
 </body>
 </html>

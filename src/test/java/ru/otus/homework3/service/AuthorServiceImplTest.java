@@ -11,6 +11,7 @@ import ru.otus.homework3.repository.AuthorRepository;
 import ru.otus.homework3.repository.BookRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +40,7 @@ class AuthorServiceImplTest {
 
         service.saveAuthor(foucault.getName());
 
-        final Author actual = service.getAuthorByName("Michel Foucault");
+        final Author actual = service.getAuthorByName("Michel Foucault").get(0);
 
         assertNotNull(actual);
         assertEquals(foucault.getName(), actual.getName());
@@ -51,7 +52,7 @@ class AuthorServiceImplTest {
     void shouldReturnCorrectAuthorByName() {
         when(authorRepository.findByName(jamesJoyce.getName())).thenReturn(List.of(jamesJoyce));
 
-        final Author actual = service.getAuthorByName(jamesJoyce.getName());
+        final Author actual = service.getAuthorByName(jamesJoyce.getName()).get(0);
 
         assertEquals(jamesJoyce, actual);
 
@@ -63,21 +64,20 @@ class AuthorServiceImplTest {
     void testUpdateAuthorMethodByComparing() {
         final Author author = new Author("Author");
 
-        when(authorRepository.findByName(jamesJoyce.getName())).thenReturn(List.of(jamesJoyce));
+        when(authorRepository.findById(jamesJoyce.getName())).thenReturn(Optional.of(jamesJoyce));
         when(authorRepository.findByName(author.getName())).thenReturn(List.of(author));
         when(authorRepository.save(author)).thenReturn(author);
         when(bookRepository.findByAuthor_Name(author.getName())).thenReturn(List.of());
-        when(authorRepository.findByName("Author")).thenReturn(List.of(author));
 
         service.updateAuthor(jamesJoyce.getName(), "Author");
 
-        final Author actualAuthor = service.getAuthorByName("Author");
+        final Author actualAuthor = service.getAuthorByName("Author").get(0);
 
         assertThat(actualAuthor).isNotNull().matches(s -> !s.getName().isBlank())
                 .matches(s -> s.getName().equals("Author"));
 
         final InOrder inOrder = inOrder(authorRepository, bookRepository);
-        inOrder.verify(authorRepository).findByName("James Joyce");
+        inOrder.verify(authorRepository).findById("James Joyce");
         inOrder.verify(authorRepository).save(author);
         inOrder.verify(bookRepository).findByAuthor_Name("James Joyce");
     }
@@ -85,18 +85,18 @@ class AuthorServiceImplTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void authorShouldBeDeletedCorrectly() {
-        when(authorRepository.findByName(jamesJoyce.getName())).thenReturn(List.of(jamesJoyce));
-        doNothing().when(authorRepository).deleteByName(jamesJoyce.getName());
+        when(authorRepository.findById(jamesJoyce.getName())).thenReturn(Optional.of(jamesJoyce));
+        doNothing().when(authorRepository).deleteById(jamesJoyce.getName());
         doNothing().when(bookRepository).deleteByAuthor_Name(jamesJoyce.getName());
 
         final String expected = "James Joyce was deleted";
-        final String actual = service.deleteAuthorByName("James Joyce");
+        final String actual = service.deleteAuthor("James Joyce");
 
         assertEquals(expected, actual);
 
         final InOrder inOrder = inOrder(authorRepository, bookRepository);
-        inOrder.verify(authorRepository).findByName(jamesJoyce.getName());
-        inOrder.verify(authorRepository).deleteByName(jamesJoyce.getName());
+        inOrder.verify(authorRepository).findById(jamesJoyce.getName());
+        inOrder.verify(authorRepository).deleteById(jamesJoyce.getName());
         inOrder.verify(bookRepository).deleteByAuthor_Name(jamesJoyce.getName());
     }
 }

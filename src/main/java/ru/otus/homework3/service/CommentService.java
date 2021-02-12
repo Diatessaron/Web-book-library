@@ -7,13 +7,15 @@ import java.util.List;
 public interface CommentService {
     String saveComment(String bookTitle, String commentContent);
 
-    Comment getCommentByContent(String content);
+    Comment getCommentById(String id);
+
+    List<Comment> getCommentByContent(String content);
 
     List<Comment> getCommentsByBook(String bookTitle);
 
     List<Comment> getAll();
 
-    String updateComment(String oldCommentContent, String commentContent);
+    String updateComment(String id, String commentContent);
 
-    String deleteByContent(String content);
+    String deleteComment(String id);
 }

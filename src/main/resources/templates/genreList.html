@@ -19,10 +19,12 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
     <nav class="my-2 my-md-0 me-md-3">
         <a th:href="@{/genres/add}" href="genreSave.html" class="btn btn-outline-primary">Add genre</a>
@@ -41,27 +43,43 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="genre : ${genres}">
-        <td th:text="${genre.id}">1</td>
-        <td>
-            <a th:text="${genre.name}" th:href="@{'/genres/{genre}'(genre=${genre.name})}"
-                    href="genre.html">Genre</a>
-        </td>
-        <td>
-            <a th:href="@{'/genres/edit/{genre}'(genre=${genre.name})}"
-               href="genreEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${genre}" th:action="@{'/genres/{genre}'(genre=${genre.name})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const value = btn.name
+        $.ajax({
+            url: '/api/genres/',
+            method: 'delete',
+            contentType: "application/json",
+            data: JSON.stringify({id: value})
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/genres').done(function (genres) {
+            genres.forEach(function (genre) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${genre.id}</td>
+                        <td>
+                            <a href="/genres/id?id=${genre.id}">${genre.name}</a>
+                        </td>
+                        <td>
+                            <a href="/genres/edit?id=${genre.id}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${genre.id}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
 
 </body>
 </html>

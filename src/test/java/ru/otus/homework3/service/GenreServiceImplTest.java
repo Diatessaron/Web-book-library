@@ -87,19 +87,20 @@ class GenreServiceImplTest {
     void testUpdateGenreMethodByComparing() {
         final Genre genre = new Genre("Genre");
 
+        when(genreRepository.findById(expectedNovel.getName())).thenReturn(Optional.of(expectedNovel));
         when(genreRepository.findByName(genre.getName())).thenReturn(Optional.of(genre));
-        when(genreRepository.findByName(expectedNovel.getName())).thenReturn(Optional.of(expectedNovel));
         when(genreRepository.save(genre)).thenReturn(genre);
         when(bookRepository.findByGenre_Name(expectedNovel.getName())).thenReturn(List.of());
 
         service.updateGenre("Modernist novel", "Genre");
 
         final Genre actualGenre = service.getGenreByName("Genre");
+
         assertThat(actualGenre).isNotNull().matches(s -> !s.getName().isBlank())
                 .matches(s -> s.getName().equals("Genre"));
 
         final InOrder inOrder = inOrder(genreRepository, bookRepository);
-        inOrder.verify(genreRepository).findByName("Modernist novel");
+        inOrder.verify(genreRepository).findById("Modernist novel");
         inOrder.verify(genreRepository).save(genre);
         inOrder.verify(bookRepository).findByGenre_Name("Modernist novel");
     }
@@ -107,18 +108,18 @@ class GenreServiceImplTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void genreShouldBeDeletedCorrectly() {
-        when(genreRepository.findByName(expectedNovel.getName())).thenReturn(Optional.of(expectedNovel));
-        doNothing().when(genreRepository).deleteByName(expectedNovel.getName());
+        when(genreRepository.findById(expectedNovel.getName())).thenReturn(Optional.of(expectedNovel));
+        doNothing().when(genreRepository).deleteById(expectedNovel.getName());
         doNothing().when(bookRepository).deleteByGenre_Name(expectedNovel.getName());
 
         final String expected = "Modernist novel was deleted";
-        final String actual = service.deleteGenreByName("Modernist novel");
+        final String actual = service.deleteGenre("Modernist novel");
 
         assertEquals(expected, actual);
 
         final InOrder inOrder = inOrder(genreRepository, bookRepository);
-        inOrder.verify(genreRepository).findByName(expectedNovel.getName());
-        inOrder.verify(genreRepository).deleteByName(expectedNovel.getName());
+        inOrder.verify(genreRepository).findById(expectedNovel.getName());
+        inOrder.verify(genreRepository).deleteById(expectedNovel.getName());
         inOrder.verify(bookRepository).deleteByGenre_Name(expectedNovel.getName());
     }
 }

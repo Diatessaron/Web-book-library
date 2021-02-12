@@ -53,7 +53,7 @@ class BookServiceImplTest {
         service.saveBook("Discipline and Punish", "Michel Foucault",
                 "Philosophy");
 
-        final Book actualBook = service.getBookByTitle("Discipline and Punish");
+        final Book actualBook = service.getBookByTitle("Discipline and Punish").get(0);
         assertThat(actualBook).isNotNull().matches(s -> !s.getTitle().equals(""))
                 .matches(s -> s.getTitle().equals("Discipline and Punish"))
                 .matches(s -> s.getAuthor().getName().equals("Michel Foucault"))
@@ -80,7 +80,7 @@ class BookServiceImplTest {
         service.saveBook("A Portrait of the Artist as a Young Man",
                 "James Joyce", "Modernist novel");
 
-        final Book actualBook = service.getBookByTitle("A Portrait of the Artist as a Young Man");
+        final Book actualBook = service.getBookByTitle("A Portrait of the Artist as a Young Man").get(0);
         assertThat(actualBook).isNotNull().matches(s -> !s.getTitle().equals(""))
                 .matches(s -> s.getTitle().equals("A Portrait of the Artist as a Young Man"))
                 .matches(s -> s.getAuthor().getName().equals("James Joyce"))
@@ -100,7 +100,7 @@ class BookServiceImplTest {
 
         when(bookRepository.findByTitle(book.getTitle())).thenReturn(List.of(book));
 
-        final Book actual = service.getBookByTitle(expectedUlysses.getTitle());
+        final Book actual = service.getBookByTitle(expectedUlysses.getTitle()).get(0);
 
         assertEquals(expectedUlysses, actual);
 
@@ -115,7 +115,7 @@ class BookServiceImplTest {
 
         when(bookRepository.findByGenre_Name(book.getGenre().getName())).thenReturn(List.of(book));
 
-        final Book actual = service.getBookByGenre(expectedUlysses.getGenre().getName());
+        final Book actual = service.getBookByGenre(expectedUlysses.getGenre().getName()).get(0);
 
         assertEquals(expectedUlysses, actual);
 
@@ -149,7 +149,7 @@ class BookServiceImplTest {
         when(authorRepository.findByName(author.getName())).thenReturn(List.of(author));
         when(genreRepository.findByName(genre.getName())).thenReturn(Optional.of(genre));
         when(bookRepository.save(new Book("Discipline and Punish", author, genre))).thenReturn(book);
-        when(bookRepository.findByTitle(book.getTitle())).thenReturn(List.of(book));
+        when(bookRepository.findById(book.getTitle())).thenReturn(Optional.of(book));
         when(commentRepository.findByBook_Title(book.getTitle())).thenReturn(List.of());
         when(bookRepository.findByTitle("Discipline and Punish")).thenReturn
                 (List.of(new Book("Discipline and Punish", author, genre)));
@@ -157,7 +157,7 @@ class BookServiceImplTest {
         service.updateBook("Ulysses", "Discipline and Punish", "Michel Foucault",
                 "Philosophy");
 
-        final Book actualBook = service.getBookByTitle("Discipline and Punish");
+        final Book actualBook = service.getBookByTitle("Discipline and Punish").get(0);
         assertThat(actualBook).isNotNull().matches(s -> !s.getTitle().equals(""))
                 .matches(s -> s.getTitle().equals("Discipline and Punish"))
                 .matches(s -> s.getAuthor().getName().equals("Michel Foucault"))
@@ -166,9 +166,8 @@ class BookServiceImplTest {
         final InOrder inOrder = inOrder(bookRepository, authorRepository, genreRepository, commentRepository);
         inOrder.verify(authorRepository).findByName(author.getName());
         inOrder.verify(genreRepository).findByName(genre.getName());
-        inOrder.verify(bookRepository).findByTitle("Ulysses");
+        inOrder.verify(bookRepository).findById("Ulysses");
         inOrder.verify(bookRepository).save(book);
-        inOrder.verify(commentRepository).findByBook_Title(expectedUlysses.getTitle());
     }
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
@@ -181,7 +180,7 @@ class BookServiceImplTest {
         when(authorRepository.findByName(author.getName())).thenReturn(List.of(author));
         when(genreRepository.findByName(genre.getName())).thenReturn(Optional.of(genre));
         when(bookRepository.save(new Book("Discipline and Punish", author, genre))).thenReturn(book);
-        when(bookRepository.findByTitle(book.getTitle())).thenReturn(List.of(book));
+        when(bookRepository.findById(book.getTitle())).thenReturn(Optional.of(book));
         when(commentRepository.findByBook_Title(book.getTitle())).thenReturn(List.of());
         when(bookRepository.findByTitle("A Portrait of the Artist as a Young Man")).thenReturn
                 (List.of(new Book("A Portrait of the Artist as a Young Man", author, genre)));
@@ -189,7 +188,7 @@ class BookServiceImplTest {
         service.updateBook("Ulysses", "A Portrait of the Artist as a Young Man",
                 "James Joyce", "Modernist novel");
 
-        final Book actualBook = service.getBookByTitle("A Portrait of the Artist as a Young Man");
+        final Book actualBook = service.getBookByTitle("A Portrait of the Artist as a Young Man").get(0);
         assertThat(actualBook).isNotNull().matches(s -> !s.getTitle().equals(""))
                 .matches(s -> s.getTitle().equals("A Portrait of the Artist as a Young Man"))
                 .matches(s -> s.getAuthor().getName().equals("James Joyce"))
@@ -198,8 +197,7 @@ class BookServiceImplTest {
         final InOrder inOrder = inOrder(bookRepository, authorRepository, genreRepository, commentRepository);
         inOrder.verify(authorRepository).findByName(author.getName());
         inOrder.verify(genreRepository).findByName(genre.getName());
-        inOrder.verify(bookRepository).findByTitle("Ulysses");
+        inOrder.verify(bookRepository).findById("Ulysses");
         inOrder.verify(bookRepository).save(book);
-        inOrder.verify(commentRepository).findByBook_Title(expectedUlysses.getTitle());
     }
 }

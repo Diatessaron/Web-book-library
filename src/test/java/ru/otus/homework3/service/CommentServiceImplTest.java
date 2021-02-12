@@ -48,25 +48,26 @@ class CommentServiceImplTest {
         when(bookRepository.findByTitle(book.getTitle())).thenReturn(List.of(book));
         when(commentRepository.save(expected)).thenReturn(expected);
         when(commentRepository.save(expected)).thenReturn(expected);
-        when(commentRepository.findByContent(expected.getContent())).thenReturn(Optional.of(expected));
+        when(commentRepository.findByContent(expected.getContent())).thenReturn(List.of(expected));
 
         bookRepository.save(book);
         commentService.saveComment(expected.getBook().getTitle(), expected.getContent());
-        final Comment actual = commentService.getCommentByContent(expected.getContent());
+        final Comment actual = commentService.getCommentByContent(expected.getContent()).get(0);
 
         assertEquals(expected.getContent(), actual.getContent());
 
         final InOrder inOrder = inOrder(bookRepository, commentRepository);
-        inOrder.verify(bookRepository).findByTitle(book.getTitle());
+        inOrder.verify(bookRepository).save(book);
         inOrder.verify(commentRepository).save(expected);
+        inOrder.verify(commentRepository).findByContent(expected.getContent());
     }
 
     @Test
     void shouldReturnCorrectCommentByContent() {
         when(commentRepository.findByContent(ulyssesComment.getContent())).thenReturn
-                (Optional.of(ulyssesComment));
+                (List.of(ulyssesComment));
 
-        final Comment actual = commentService.getCommentByContent(ulyssesComment.getContent());
+        final Comment actual = commentService.getCommentByContent(ulyssesComment.getContent()).get(0);
 
         assertEquals(ulyssesComment, actual);
 
@@ -84,7 +85,6 @@ class CommentServiceImplTest {
         assertEquals(expected, actual);
 
         final InOrder inOrder = inOrder(bookRepository, commentRepository);
-        inOrder.verify(bookRepository).findByTitle(ulysses.getTitle());
         inOrder.verify(commentRepository).findByBook_Title(ulysses.getTitle());
     }
 
@@ -109,7 +109,6 @@ class CommentServiceImplTest {
         assertEquals(expected, actual);
 
         final InOrder inOrder = inOrder(bookRepository, commentRepository);
-        inOrder.verify(bookRepository).findByTitle(book.getTitle());
         inOrder.verify(commentRepository).save(disciplineAndPunishComment);
         inOrder.verify(commentRepository).findAll();
     }
@@ -119,40 +118,36 @@ class CommentServiceImplTest {
     void shouldUpdateCommentCorrectly() {
         final Comment comment = new Comment("Comment", ulysses.getTitle());
 
-        when(commentRepository.findByContent(ulyssesComment.getContent())).thenReturn
+        when(commentRepository.findById(ulyssesComment.getContent())).thenReturn
                 (Optional.of(ulyssesComment));
-        when(bookRepository.findByTitle(ulysses.getTitle())).thenReturn(List.of(ulysses));
         when(commentRepository.save(comment)).thenReturn(comment);
-        when(commentRepository.findByContent(comment.getContent())).thenReturn(Optional.of(comment));
+        when(commentRepository.findByContent(comment.getContent())).thenReturn(List.of(comment));
 
         commentService.updateComment("Published in 1922", "Comment");
 
-        final Comment actualComment = commentService.getCommentByContent("Comment");
+        final Comment actualComment = commentService.getCommentByContent(comment.getContent()).get(0);
         assertThat(actualComment).isNotNull().matches(s -> !s.getContent().isBlank())
                 .matches(s -> s.getContent().equals("Comment"));
 
         final InOrder inOrder = inOrder(bookRepository, commentRepository);
-        inOrder.verify(commentRepository).findByContent("Published in 1922");
-        inOrder.verify(bookRepository).findByTitle("Ulysses");
+        inOrder.verify(commentRepository).findById("Published in 1922");
         inOrder.verify(commentRepository).save(comment);
     }
 
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Test
     void testDeleteByIdMethodByResultStringComparing() {
-        when(commentRepository.findByContent(ulyssesComment.getContent())).thenReturn
+        when(commentRepository.findById(ulyssesComment.getContent())).thenReturn
                 (Optional.of(ulyssesComment));
-        when(bookRepository.findByTitle(ulysses.getTitle())).thenReturn(List.of(ulysses));
         doNothing().when(commentRepository).deleteByContent(ulyssesComment.getContent());
 
         final String expected = "Ulysses comment was deleted";
-        final String actual = commentService.deleteByContent("Published in 1922");
+        final String actual = commentService.deleteComment("Published in 1922");
 
         assertEquals(expected, actual);
 
         final InOrder inOrder = inOrder(bookRepository, commentRepository);
-        inOrder.verify(commentRepository).findByContent(ulyssesComment.getContent());
-        inOrder.verify(bookRepository).findByTitle(ulysses.getTitle());
-        inOrder.verify(commentRepository).deleteByContent(ulyssesComment.getContent());
+        inOrder.verify(commentRepository).findById(ulyssesComment.getContent());
+        inOrder.verify(commentRepository).deleteById(ulyssesComment.getContent());
     }
 }

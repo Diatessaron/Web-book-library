@@ -19,10 +19,12 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
     <nav class="my-2 my-md-0 me-md-3">
         <a th:href="@{/comments/add}" href="commentSave.html" class="btn btn-outline-primary">Add comment</a>
@@ -35,41 +37,53 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Book</th>
         <th>Content</th>
+        <th>Book</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="comment : ${comments}">
-        <td th:text="${comment.id}">1</td>
-        <td>
-            <a th:text="${comment.book.title}"
-               th:href="@{'/comments/book/{bookTitle}'(bookTitle=${comment.book.title})}"
-               href="commentList.html">Comment</a>
-        </td>
-        <td>
-            <a th:text="${comment.content}"
-               th:href="@{'/comments/{content}'(content=${comment.content})}"
-               href="comment.html"></a>
-        </td>
-        <td>
-            <a th:href="@{'/comments/edit/{name}'(name=${comment.content})}"
-               href="commentEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${comment}"
-                  th:action="@{'/comments/{content}'(content=${comment.content})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const value = btn.name
+        $.ajax({
+            url: '/api/comments',
+            method: 'delete',
+            contentType: "application/json",
+            data: JSON.stringify({id: value})
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/comments').done(function (comments) {
+            comments.forEach(function (comment) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${comment.id}</td>
+                        <td>
+                            <a href="/comments/id?id=${comment.id}">${comment.content}</a>
+                        </td>
+                        <td>
+                            <a href="/comments/book/${comment.book.title}">${comment.book.title}</a>
+                        </td>
+                        <td>
+                            <a href="/comments/edit?id=${comment.id}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${comment.id}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
 
 </body>
 </html>

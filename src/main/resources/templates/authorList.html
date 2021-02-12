@@ -19,10 +19,12 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
     <nav class="my-2 my-md-0 me-md-3">
         <a th:href="@{/authors/add}" href="authorSave.html" class="btn btn-outline-primary">Add author</a>
@@ -41,26 +43,43 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="author : ${authors}">
-        <td th:text="${author.id}">1</td>
-        <td>
-            <a th:text="${author.name}" th:href="@{'/authors/{author}'(author=${author.name})}"
-               href="author.html">John Doe</a>
-        </td>
-        <td>
-            <a th:href="@{'/authors/edit/{author}'(author=${author.name})}"
-               href="authorEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${author}" th:action="@{'/authors/{author}'(author=${author.name})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const value = btn.name
+        $.ajax({
+            url: '/api/authors',
+            method: 'delete',
+            contentType: "application/json",
+            data: JSON.stringify({id: value})
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/authors').done(function (authors) {
+            authors.forEach(function (author) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${author.id}</td>
+                        <td>
+                            <a href="/authors/id?id=${author.id}">${author.name}</a>
+                        </td>
+                        <td>
+                            <a href="/authors/edit?id=${author.id}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${author.id}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+
 </body>
 </html>

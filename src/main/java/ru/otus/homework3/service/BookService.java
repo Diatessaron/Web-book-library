@@ -7,17 +7,19 @@ import java.util.List;
 public interface BookService {
     void saveBook(String title, String authorNameParameter, String genreNameParameter);
 
-    Book getBookByTitle(String title);
+    Book getBookById(String id);
 
-    Book getBookByAuthor(String author);
+    List<Book> getBookByTitle(String title);
 
-    Book getBookByGenre(String genre);
+    List<Book> getBookByAuthor(String author);
 
-    Book getBookByComment(String comment);
+    List<Book> getBookByGenre(String genre);
+
+    Book getBookByComment(String commentId);
 
     List<Book> getAll();
 
     void updateBook(String oldBookTitle, String title, String authorNameParameter, String genreNameParameter);
 
-    void deleteBookByTitle(String title);
+    void deleteBook(String id);
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Book by Comment</title>
+    <title>Book by Author</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style type="text/css">
         body {
@@ -36,44 +36,50 @@
     </tr>
     </thead>
     <tbody>
+    <tr>
     </tbody>
 </table>
 
 <script th:inline="javascript">
-    const book = /*[[${book.id}]]*/ '';
+    const bookAuthor = /*[[${book[0].author.name}]]*/ '';
+
+    function deleteRow(btn) {
+        const value = btn.name
+        $.ajax({
+            url: '/api/books/',
+            method: 'delete',
+            contentType: "application/json",
+            data: JSON.stringify({id: value})
+        })
+        document.location.href = '/books'
+    }
+
     $(function () {
-        $.get('/api/books/id?id=' + book).done(function (book) {
-            $('tbody').append(`
+        $.get('/api/books/author/' + bookAuthor).done(function (books) {
+            books.forEach(function (book) {
+                $('tbody').append(`
                     <tr>
                         <td>${book.id}</td>
                         <td>
-                            <p>${book.title}</p>
+                            <a href="/books/id?id=${book.id}">${book.title}</a>
                         </td>
                         <td>
-                            <p>${book.author.name}</p>
+                            <a href="/books/author/${book.author.name}">${book.author.name}</a>
                         </td>
                         <td>
-                            <p>${book.genre.name}</p>
+                            <a href="/books/genre/${book.genre.name}">${book.genre.name}</a>
                         </td>
                         <td>
                             <a href="/books/edit?id=${book.id}">Edit</a>
                         </td>
                         <td>
-                            <input type="button" value="Delete" id="input">
+                            <input name="${book.id}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
                         </td>
                     </tr>
                 `)
-            document.getElementById('input').onclick = function () {
-                const value = book.title
-                $.ajax({
-                    url: '/api/books/',
-                    method: 'delete',
-                    contentType: "application/json",
-                    data: JSON.stringify({id: value})
-                })
-                document.location.href = '/books'
-            }
-        });
+            });
+        })
     });
 </script>
 

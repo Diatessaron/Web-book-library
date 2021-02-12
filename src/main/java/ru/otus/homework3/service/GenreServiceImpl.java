@@ -30,6 +30,12 @@ public class GenreServiceImpl implements GenreService {
 
     @Transactional(readOnly = true)
     @Override
+    public Genre getGenreById(String id){
+        return genreRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Incorrect genre id"));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public Genre getGenreByName(String name) {
         return genreRepository.findByName(name).orElseThrow
                 (() -> new IllegalArgumentException("Incorrect name"));
@@ -43,10 +49,12 @@ public class GenreServiceImpl implements GenreService {
 
     @Transactional
     @Override
-    public String updateGenre(String oldGenreName, String name) {
-        final Genre genre = genreRepository.findByName(oldGenreName).orElseThrow
-                (() -> new IllegalArgumentException("Incorrect genre name"));
+    public String updateGenre(String id, String name) {
+        final Genre genre = genreRepository.findById(id).orElseThrow
+                (() -> new IllegalArgumentException("Incorrect genre id"));
+        final String oldGenreName = genre.getName();
         genre.setName(name);
+
         genreRepository.save(genre);
 
         final List<Book> bookList = bookRepository.findByGenre_Name(oldGenreName);
@@ -61,11 +69,11 @@ public class GenreServiceImpl implements GenreService {
 
     @Transactional
     @Override
-    public String deleteGenreByName(String name) {
-        final Genre genre = genreRepository.findByName(name)
-                .orElseThrow(() -> new IllegalArgumentException("Incorrect genre name"));
-        genreRepository.deleteByName(name);
-        bookRepository.deleteByGenre_Name(name);
+    public String deleteGenre(String id) {
+        final Genre genre = genreRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Incorrect genre id"));
+        genreRepository.deleteById(id);
+        bookRepository.deleteByGenre_Name(genre.getName());
 
         return String.format("%s was deleted", genre.getName());
     }

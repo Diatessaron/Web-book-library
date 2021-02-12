@@ -19,27 +19,17 @@
             margin: 4px;
         }
     </style>
+    <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
 <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <input onclick="window.history.go(-1); return false;" type="submit" value="Previous page" style="margin: 15px;"/>
     <a th:href="@{/}" href="index.html" class="h5 my-0 me-md-auto fw-normal">Main page</a>
     <nav class="my-2 my-md-0 me-md-3">
         <a th:href="@{/books/add}" href="bookSave.html" class="btn btn-outline-primary">Add book</a>
     </nav>
 </header>
-
-<br>
-<br>
-<form th:action="@{'/books/comment'}"
-      th:method="get">
-    <input type="text" name="comment" placeholder="Input book comment"
-           class="form-control"><br>
-    <button type="submit" class="btn btn-success">Find book by comment</button>
-</form>
-
-<br>
-<br>
 
 <h2>Books:</h2>
 
@@ -55,37 +45,49 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="book : ${books}">
-        <td th:text="${book.id}">1</td>
-        <td>
-            <a th:text="${book.title}" th:href="@{'/books/title/{title}'(title=${book.title})}"
-               href="bookByTitle.html">Book</a>
-        </td>
-        <td>
-            <a th:text="${book.author.name}"
-               th:href="@{'/books/author/{author}'(author=${book.author.name})}"
-               href="bookByTitle.html">Author</a>
-        </td>
-        <td>
-            <a th:text="${book.genre.name}"
-               th:href="@{'/books/genre/{genre}'(genre=${book.genre.name})}"
-               href="bookByTitle.html">Genre</a>
-        </td>
-        <td>
-            <a th:href="@{'/books/edit/{title}'(title=${book.title})}"
-               href="bookEdit.html">Edit</a>
-        </td>
-        <td>
-            <form th:object="${book}" th:action="@{'/books/{title}'(title=${book.title})}"
-                  th:method="post">
-                <button type="submit" class="btn">
-                    Delete
-                </button>
-            </form>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    function deleteRow(btn) {
+        const value = btn.name
+        $.ajax({
+            url: '/api/books',
+            method: 'delete',
+            contentType: "application/json",
+            data: JSON.stringify({id: value})
+        })
+        window.location.reload();
+    }
+
+    $(function () {
+        $.get('/api/books').done(function (books) {
+            books.forEach(function (book) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>
+                            <a href="/books/id?id=${book.id}">${book.title}</a>
+                        </td>
+                        <td>
+                            <a href="/books/author/${book.author.name}">${book.author.name}</a>
+                        </td>
+                        <td>
+                            <a href="/books/genre/${book.genre.name}">${book.genre.name}</a>
+                        </td>
+                        <td>
+                            <a href="/books/edit?id=${book.id}">Edit</a>
+                        </td>
+                        <td>
+                            <input name="${book.id}" type="button" value="Delete" id="input"
+                            onclick="deleteRow(this)">
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
 
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Book by Comment</title>
+    <title>Book</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style type="text/css">
         body {
@@ -41,6 +41,7 @@
 
 <script th:inline="javascript">
     const book = /*[[${book.id}]]*/ '';
+
     $(function () {
         $.get('/api/books/id?id=' + book).done(function (book) {
             $('tbody').append(`
@@ -64,9 +65,9 @@
                     </tr>
                 `)
             document.getElementById('input').onclick = function () {
-                const value = book.title
+                const value = book.id
                 $.ajax({
-                    url: '/api/books/',
+                    url: '/api/books',
                     method: 'delete',
                     contentType: "application/json",
                     data: JSON.stringify({id: value})
